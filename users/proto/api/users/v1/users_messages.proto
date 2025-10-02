@@ -1,0 +1,331 @@
+syntax = "proto3";
+
+package api.users.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "users/pkg/api/users/v1;user";
+
+// CreateProfileRequest - запрос на создание профиля
+message CreateProfileRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "CreateProfileRequest"
+      description: "Запрос на создание профиля пользователя"
+      required: [
+        "user_id",
+        "nickname"
+      ]
+    }
+  };
+
+  // Id пользователя
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+
+  // Никнейм
+  string nickname = 2 [
+    json_name = "nickname",
+    (buf.validate.field).string.pattern = "^[a-z0-9_]{3,20}$",
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "nickname"
+      description: "Никнейм пользователя"
+      example: "\"john_doe\""
+      type: STRING
+    }
+  ];
+
+  // Биография
+  string bio = 3 [
+    json_name = "bio",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "bio"
+      description: "Биография пользователя"
+      example: "\"Люблю программировать\""
+      type: STRING
+    }
+  ];
+
+  // URL аватара
+  string avatar_url = 4 [
+    json_name = "avatar_url",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "avatar_url"
+      description: "URL аватара пользователя"
+      example: "\"https://example.com/avatar.png\""
+      type: STRING
+    }
+  ];
+}
+
+// CreateProfileResponse - ответ на создание профиля
+message CreateProfileResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "CreateProfileResponse"
+      description: "Ответ на создание профиля пользователя"
+    }
+  };
+
+  // Созданный профиль
+  UserProfile profile = 1 [json_name = "profile"];
+}
+
+// UpdateProfileRequest - запрос на обновление профиля
+message UpdateProfileRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "UpdateProfileRequest"
+      description: "Запрос на обновление профиля пользователя"
+      required: ["user_id"]
+    }
+  };
+
+  // Id пользователя
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+
+  // Никнейм
+  string nickname = 2 [
+    json_name = "nickname",
+    (buf.validate.field).string.pattern = "^[a-z0-9_]{3,20}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "nickname"
+      description: "Никнейм пользователя"
+      example: "\"john_doe\""
+      type: STRING
+    }
+  ];
+
+  // Биография
+  string bio = 3 [
+    json_name = "bio",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "bio"
+      description: "Биография пользователя"
+      example: "\"Люблю программировать\""
+      type: STRING
+    }
+  ];
+
+  // URL аватара
+  string avatar_url = 4 [
+    json_name = "avatar_url",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "avatar_url"
+      description: "URL аватара пользователя"
+      example: "\"https://example.com/avatar.png\""
+      type: STRING
+    }
+  ];
+}
+
+// UpdateProfileResponse - ответ на обновление профиля
+message UpdateProfileResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "UpdateProfileResponse"
+      description: "Ответ на обновление профиля пользователя"
+    }
+  };
+
+  // Обновлённый профиль
+  UserProfile profile = 1 [json_name = "profile"];
+}
+
+// GetProfileByIDRequest - запрос на получение профиля по ID
+message GetProfileByIDRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetProfileByIDRequest"
+      description: "Запрос на получение профиля пользователя по ID"
+      required: ["id"]
+    }
+  };
+
+  // Id пользователя
+  string id = 1 [
+    json_name = "id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// GetProfileByIDResponse - ответ на получение профиля по ID
+message GetProfileByIDResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetProfileByIDResponse"
+      description: "Ответ на получение профиля пользователя по ID"
+    }
+  };
+
+  // Профиль пользователя
+  UserProfile profile = 1 [json_name = "profile"];
+}
+
+// GetProfileByNicknameRequest - запрос на получение профиля по никнейму
+message GetProfileByNicknameRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetProfileByNicknameRequest"
+      description: "Запрос на получение профиля пользователя по никнейму"
+      required: ["nickname"]
+    }
+  };
+
+  // Никнейм
+  string nickname = 1 [
+    json_name = "nickname",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "nickname"
+      description: "Никнейм пользователя"
+      example: "\"john_doe\""
+      type: STRING
+    }
+  ];
+}
+
+// GetProfileByNicknameResponse - ответ на получение профиля по никнейму
+message GetProfileByNicknameResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetProfileByNicknameResponse"
+      description: "Ответ на получение профиля пользователя по никнейму"
+    }
+  };
+
+  // Профиль пользователя
+  UserProfile profile = 1 [json_name = "profile"];
+}
+
+// SearchByNicknameRequest - запрос поиска пользователей по никнейму
+message SearchByNicknameRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SearchByNicknameRequest"
+      description: "Запрос на поиск пользователей по никнейму"
+      required: ["query"]
+    }
+  };
+
+  // Поисковый запрос
+  string query = 1 [
+    json_name = "query",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "query"
+      description: "Поисковый запрос для никнейма"
+      example: "\"john\""
+      type: STRING
+    }
+  ];
+
+  // Лимит количества результатов
+  int32 limit = 2 [
+    json_name = "limit",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "limit"
+      description: "Лимит количества результатов"
+      example: "20"
+      type: INTEGER
+    }
+  ];
+}
+
+// SearchByNicknameResponse - ответ поиска пользователей по никнейму
+message SearchByNicknameResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SearchByNicknameResponse"
+      description: "Ответ на поиск пользователей по никнейму"
+    }
+  };
+
+  // Список найденных профилей
+  repeated UserProfile results = 1 [json_name = "results"];
+}
+
+// UserProfile - структура профиля пользователя
+message UserProfile {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "UserProfile"
+      description: "Структура профиля пользователя"
+    }
+  };
+
+  // Id пользователя
+  string user_id = 1 [
+    json_name = "user_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+
+  // Никнейм
+  string nickname = 2 [
+    json_name = "nickname",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "nickname"
+      description: "Никнейм пользователя"
+      example: "\"john_doe\""
+      type: STRING
+    }
+  ];
+
+  // Биография
+  string bio = 3 [
+    json_name = "bio",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "bio"
+      description: "Биография пользователя"
+      example: "\"Люблю программировать\""
+      type: STRING
+    }
+  ];
+
+  // URL аватара
+  string avatar_url = 4 [
+    json_name = "avatar_url",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "avatar_url"
+      description: "URL аватара пользователя"
+      example: "\"https://example.com/avatar.png\""
+      type: STRING
+    }
+  ];
+}

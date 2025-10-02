@@ -1,0 +1,214 @@
+syntax = "proto3";
+
+package api.auth.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "auth/pkg/api/auth/v1;auth";
+
+// RegisterRequest - Запрос на регистрацию
+message RegisterRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RegisterRequest"
+      description: "Запрос на регистрацию"
+      required: [
+        "email",
+        "password"
+      ]
+    }
+  };
+
+  // Почта
+  string email = 1 [
+    json_name = "email",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "email"
+      description: "email пользователя"
+      example: "\"user@gmail.com\""
+      type: STRING
+    }
+  ];
+  // Пароль
+  string password = 2 [
+    json_name = "password",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "password"
+      description: "пароль"
+      example: "\"xQta78\""
+      type: STRING
+    }
+  ];
+}
+
+// RegisterResponse - Ответ RegisterRequest
+message RegisterResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RegisterResponse"
+      description: "RegisterResponse - ответ Register"
+    }
+  };
+
+  // Id пользователя
+  string user_id = 1 [
+    json_name = "user_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// LoginRequest - Запрос на вход
+message LoginRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "LoginRequest"
+      description: "Запрос на вход"
+      required: [
+        "email",
+        "password"
+      ]
+    }
+  };
+
+  // Почта
+  string email = 1 [
+    json_name = "email",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "email"
+      description: "email пользователя"
+      example: "\"user@gmail.com\""
+      type: STRING
+    }
+  ];
+  // Пароль
+  string password = 2 [
+    json_name = "password",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "password"
+      description: "пароль"
+      example: "\"xQta78\""
+      type: STRING
+    }
+  ];
+}
+
+// LoginResponse - Ответ LoginRequest
+message LoginResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "LoginResponse"
+      description: "LoginResponse - ответ Login"
+    }
+  };
+
+  // Access токен
+  string access_token = 1 [
+    json_name = "access_token",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "access_token"
+      description: "Access токен"
+      example: "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
+      type: STRING
+    }
+  ];
+  // Refresh токен
+  string refresh_token = 2 [
+    json_name = "refresh_token",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "refresh_token"
+      description: "Refresh токен"
+      example: "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
+      type: STRING
+    }
+  ];
+  // Id пользователя
+  string user_id = 3 [
+    json_name = "user_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// RefreshRequest - Запрос RefreshToken
+message RefreshRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RefreshTokenRequest"
+      description: "Запрос RefreshToken"
+      required: ["refresh_token"]
+    }
+  };
+
+  // Refresh токен
+  string refresh_token = 1 [
+    json_name = "refresh_token",
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "refresh_token"
+      description: "Refresh токен"
+      example: "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
+      type: STRING
+    }
+  ];
+}
+
+// RefreshResponse - Ответ RefreshToken
+message RefreshResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RefreshResponse"
+      description: "RefreshResponse - ответ Refresh"
+    }
+  };
+
+  // Access токен
+  string access_token = 1 [
+    json_name = "access_token",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "access_token"
+      description: "Access токен"
+      example: "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
+      type: STRING
+    }
+  ];
+  // Refresh токен
+  string refresh_token = 2 [
+    json_name = "refresh_token",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "refresh_token"
+      description: "Refresh токен"
+      example: "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\""
+      type: STRING
+    }
+  ];
+  // Id пользователя
+  string user_id = 3 [
+    json_name = "user_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}

@@ -1,0 +1,388 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SocialService",
+    "version": "0.0.1"
+  },
+  "tags": [
+    {
+      "name": "SocialService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/friends/requests": {
+      "post": {
+        "summary": "Отправить заявку в друзья",
+        "operationId": "SocialService_SendFriendRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SendFriendRequestResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Запрос на отправку заявки в друзья",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SendFriendRequestRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SocialService"
+        ]
+      }
+    },
+    "/v1/friends/requests/{request_id}/accept": {
+      "post": {
+        "summary": "Принять заявку",
+        "operationId": "SocialService_AcceptFriendRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AcceptFriendRequestResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "description": "Id заявки",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SocialService"
+        ]
+      }
+    },
+    "/v1/friends/requests/{request_id}/decline": {
+      "post": {
+        "summary": "Отклонить заявку",
+        "operationId": "SocialService_DeclineFriendRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeclineFriendRequestResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "description": "Id заявки",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SocialService"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/friend-requests": {
+      "get": {
+        "summary": "Список входящих заявок",
+        "operationId": "SocialService_ListRequests",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "Id пользователя, для которого получаем заявки",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SocialService"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/friends": {
+      "get": {
+        "summary": "Список друзей",
+        "operationId": "SocialService_ListFriends",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListFriendsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "Id пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "limit\n\nКоличество друзей для выборки",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "cursor",
+            "description": "Курсор для постраничной навигации",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SocialService"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/friends/remove": {
+      "post": {
+        "summary": "Удалить друга",
+        "operationId": "SocialService_RemoveFriend",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RemoveFriendResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "Id друга, которого нужно удалить",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SocialService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AcceptFriendRequestResponse": {
+      "type": "object",
+      "properties": {
+        "request": {
+          "$ref": "#/definitions/v1FriendRequest",
+          "title": "Принятая заявка"
+        }
+      },
+      "description": "Ответ на принятие заявки в друзья",
+      "title": "AcceptFriendRequestResponse"
+    },
+    "v1DeclineFriendRequestResponse": {
+      "type": "object",
+      "properties": {
+        "request": {
+          "$ref": "#/definitions/v1FriendRequest",
+          "title": "Отклонённая заявка"
+        }
+      },
+      "description": "Ответ на отклонение заявки в друзья",
+      "title": "DeclineFriendRequestResponse"
+    },
+    "v1FriendRequest": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "example": "7c9fd952-5c7d-4268-acfb-85563dba1a74",
+          "description": "Id заявки",
+          "title": "request_id"
+        },
+        "status": {
+          "type": "string",
+          "$ref": "#/definitions/v1FriendRequestStatus",
+          "example": "PENDING",
+          "description": "Статус заявки",
+          "title": "status"
+        }
+      },
+      "description": "Структура заявки в друзья",
+      "title": "FriendRequest"
+    },
+    "v1FriendRequestStatus": {
+      "type": "string",
+      "enum": [
+        "FRIEND_REQUEST_STATUS_UNSPECIFIED",
+        "FRIEND_REQUEST_STATUS_PENDING",
+        "FRIEND_REQUEST_STATUS_ACCEPTED",
+        "FRIEND_REQUEST_STATUS_DECLINED"
+      ],
+      "default": "FRIEND_REQUEST_STATUS_UNSPECIFIED",
+      "description": "- FRIEND_REQUEST_STATUS_UNSPECIFIED: Не указан\n - FRIEND_REQUEST_STATUS_PENDING: Ожидает ответа\n - FRIEND_REQUEST_STATUS_ACCEPTED: Принята\n - FRIEND_REQUEST_STATUS_DECLINED: Отклонена",
+      "title": "FriendRequestStatus - статус заявки в друзья"
+    },
+    "v1ListFriendsResponse": {
+      "type": "object",
+      "properties": {
+        "friend_user_ids": {
+          "type": "array",
+          "example": [
+            "123e4567-e89b-12d3-a456-426614174111",
+            "123e4567-e89b-12d3-a456-426614174222"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Id друзей пользователя",
+          "title": "friend_user_ids"
+        },
+        "next_cursor": {
+          "type": "string",
+          "title": "Следующий курсор"
+        }
+      },
+      "description": "Ответ списка друзей пользователя",
+      "title": "ListFriendsResponse"
+    },
+    "v1ListRequestsResponse": {
+      "type": "object",
+      "properties": {
+        "requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1FriendRequest"
+          },
+          "description": "Список заявок в друзья",
+          "title": "requests"
+        }
+      },
+      "description": "Ответ списка заявок в друзья",
+      "title": "ListRequestsResponse"
+    },
+    "v1RemoveFriendResponse": {
+      "type": "object",
+      "description": "Ответ на удаление пользователя из друзей",
+      "title": "RemoveFriendResponse"
+    },
+    "v1SendFriendRequestRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426614174000",
+          "description": "Id пользователя, которому отправляется заявка",
+          "title": "user_id"
+        }
+      },
+      "description": "Запрос на отправку заявки в друзья",
+      "title": "SendFriendRequestRequest",
+      "required": [
+        "user_id"
+      ]
+    },
+    "v1SendFriendRequestResponse": {
+      "type": "object",
+      "properties": {
+        "request": {
+          "$ref": "#/definitions/v1FriendRequest",
+          "title": "Заявка в друзья"
+        }
+      },
+      "description": "Ответ SendFriendRequest",
+      "title": "SendFriendRequestResponse"
+    }
+  }
+}
