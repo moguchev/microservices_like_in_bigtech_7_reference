@@ -1,0 +1,382 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "UserService",
+    "version": "0.0.1"
+  },
+  "tags": [
+    {
+      "name": "UserService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/users": {
+      "post": {
+        "summary": "Создать профиль",
+        "operationId": "UserService_CreateProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Запрос на создание профиля пользователя",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateProfileRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/users/nickname/{nickname}": {
+      "get": {
+        "summary": "Получить профиль по никнейму",
+        "operationId": "UserService_GetProfileByNickname",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileByNicknameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "nickname",
+            "description": "Никнейм пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/users/search": {
+      "get": {
+        "summary": "Поиск пользователей по никнейму",
+        "operationId": "UserService_SearchByNickname",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SearchByNicknameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "query",
+            "description": "query\n\nПоисковый запрос для никнейма",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "limit\n\nЛимит количества результатов",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/users/{id}": {
+      "get": {
+        "summary": "Получить профиль по ID",
+        "operationId": "UserService_GetProfileByID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProfileByIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/users/{user_id}": {
+      "patch": {
+        "summary": "Обновить профиль",
+        "operationId": "UserService_UpdateProfile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "Id пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserServiceUpdateProfileBody"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "UserServiceUpdateProfileBody": {
+      "type": "object",
+      "properties": {
+        "nickname": {
+          "type": "string",
+          "example": "john_doe",
+          "description": "Никнейм пользователя",
+          "title": "nickname"
+        },
+        "bio": {
+          "type": "string",
+          "example": "Люблю программировать",
+          "description": "Биография пользователя",
+          "title": "bio"
+        },
+        "avatar_url": {
+          "type": "string",
+          "example": "https://example.com/avatar.png",
+          "description": "URL аватара пользователя",
+          "title": "avatar_url"
+        }
+      },
+      "description": "Запрос на обновление профиля пользователя",
+      "title": "UpdateProfileRequest"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CreateProfileRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426614174000",
+          "description": "Id пользователя",
+          "title": "user_id"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "john_doe",
+          "description": "Никнейм пользователя",
+          "title": "nickname"
+        },
+        "bio": {
+          "type": "string",
+          "example": "Люблю программировать",
+          "description": "Биография пользователя",
+          "title": "bio"
+        },
+        "avatar_url": {
+          "type": "string",
+          "example": "https://example.com/avatar.png",
+          "description": "URL аватара пользователя",
+          "title": "avatar_url"
+        }
+      },
+      "description": "Запрос на создание профиля пользователя",
+      "title": "CreateProfileRequest",
+      "required": [
+        "user_id",
+        "nickname"
+      ]
+    },
+    "v1CreateProfileResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile",
+          "title": "Созданный профиль"
+        }
+      },
+      "description": "Ответ на создание профиля пользователя",
+      "title": "CreateProfileResponse"
+    },
+    "v1GetProfileByIDResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile",
+          "title": "Профиль пользователя"
+        }
+      },
+      "description": "Ответ на получение профиля пользователя по ID",
+      "title": "GetProfileByIDResponse"
+    },
+    "v1GetProfileByNicknameResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile",
+          "title": "Профиль пользователя"
+        }
+      },
+      "description": "Ответ на получение профиля пользователя по никнейму",
+      "title": "GetProfileByNicknameResponse"
+    },
+    "v1SearchByNicknameResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserProfile"
+          },
+          "title": "Список найденных профилей"
+        }
+      },
+      "description": "Ответ на поиск пользователей по никнейму",
+      "title": "SearchByNicknameResponse"
+    },
+    "v1UpdateProfileResponse": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "$ref": "#/definitions/v1UserProfile",
+          "title": "Обновлённый профиль"
+        }
+      },
+      "description": "Ответ на обновление профиля пользователя",
+      "title": "UpdateProfileResponse"
+    },
+    "v1UserProfile": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426614174000",
+          "description": "Id пользователя",
+          "title": "user_id"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "john_doe",
+          "description": "Никнейм пользователя",
+          "title": "nickname"
+        },
+        "bio": {
+          "type": "string",
+          "example": "Люблю программировать",
+          "description": "Биография пользователя",
+          "title": "bio"
+        },
+        "avatar_url": {
+          "type": "string",
+          "example": "https://example.com/avatar.png",
+          "description": "URL аватара пользователя",
+          "title": "avatar_url"
+        }
+      },
+      "description": "Структура профиля пользователя",
+      "title": "UserProfile"
+    }
+  }
+}

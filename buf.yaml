@@ -1,0 +1,18 @@
+# For details on buf.yaml configuration, visit https://buf.build/docs/configuration/v2/buf-yaml
+version: v2
+modules:
+  - path: auth/proto
+  - path: chat/proto
+  - path: social/proto
+  - path: users/proto
+  - path: vendor.protobuf
+lint:
+  use:
+    - STANDARD
+    - COMMENTS
+    - FILE_LOWER_SNAKE_CASE
+  ignore:
+    - vendor.protobuf
+breaking:
+  use:
+    - FILE

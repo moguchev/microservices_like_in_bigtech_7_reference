@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package api.social.v1;
+
+import "api/social/v1/social_messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "social/pkg/api/social/v1;social";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "SocialService"
+    version: "0.0.1"
+  }
+  schemes: HTTP
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+};
+
+// SocialService - сервис управления друзьями и заявками
+service SocialService {
+  // Отправить заявку в друзья
+  rpc SendFriendRequest(SendFriendRequestRequest) returns (SendFriendRequestResponse) {
+    option (google.api.http) = {
+      post: "/v1/friends/requests"
+      body: "*"
+    };
+  }
+
+  // Список входящих заявок
+  rpc ListRequests(ListRequestsRequest) returns (ListRequestsResponse) {
+    option (google.api.http) = {get: "/v1/users/{user_id}/friend-requests"};
+  }
+
+  // Принять заявку
+  rpc AcceptFriendRequest(AcceptFriendRequestRequest) returns (AcceptFriendRequestResponse) {
+    option (google.api.http) = {post: "/v1/friends/requests/{request_id}/accept"};
+  }
+
+  // Отклонить заявку
+  rpc DeclineFriendRequest(DeclineFriendRequestRequest) returns (DeclineFriendRequestResponse) {
+    option (google.api.http) = {post: "/v1/friends/requests/{request_id}/decline"};
+  }
+
+  // Удалить друга
+  rpc RemoveFriend(RemoveFriendRequest) returns (RemoveFriendResponse) {
+    option (google.api.http) = {post: "/v1/users/{user_id}/friends/remove"};
+  }
+
+  // Список друзей
+  rpc ListFriends(ListFriendsRequest) returns (ListFriendsResponse) {
+    option (google.api.http) = {get: "/v1/users/{user_id}/friends"};
+  }
+}

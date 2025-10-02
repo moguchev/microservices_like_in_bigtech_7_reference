@@ -1,0 +1,304 @@
+syntax = "proto3";
+
+package api.social.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "social/pkg/api/social/v1;social";
+
+// SendFriendRequestRequest - запрос на отправку заявки в друзья
+message SendFriendRequestRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SendFriendRequestRequest"
+      description: "Запрос на отправку заявки в друзья"
+      required: ["user_id"]
+    }
+  };
+
+  // Id пользователя, которому отправляется заявка
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя, которому отправляется заявка"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// SendFriendRequestResponse - ответ SendFriendRequest
+message SendFriendRequestResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SendFriendRequestResponse"
+      description: "Ответ SendFriendRequest"
+    }
+  };
+
+  // Заявка в друзья
+  FriendRequest request = 1 [json_name = "request"];
+}
+
+// ListRequestsRequest - запрос списка заявок в друзья
+message ListRequestsRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListRequestsRequest"
+      description: "Запрос списка заявок в друзья"
+      required: ["user_id"]
+    }
+  };
+
+  // Id пользователя, для которого получаем заявки
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя, для которого получаем заявки"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// ListRequestsResponse - ответ списка заявок в друзья
+message ListRequestsResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListRequestsResponse"
+      description: "Ответ списка заявок в друзья"
+    }
+  };
+
+  // Список заявок
+  repeated FriendRequest requests = 1 [
+    json_name = "requests",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "requests"
+      description: "Список заявок в друзья"
+      type: ARRAY
+    }
+  ];
+}
+
+// AcceptFriendRequestRequest - запрос на принятие заявки в друзья
+message AcceptFriendRequestRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "AcceptFriendRequestRequest"
+      description: "Запрос на принятие заявки в друзья"
+      required: ["request_id"]
+    }
+  };
+
+  // Id заявки
+  string request_id = 1 [
+    json_name = "request_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "request_id"
+      description: "Id заявки"
+      example: "\"7c9fd952-5c7d-4268-acfb-85563dba1a74\""
+      type: STRING
+    }
+  ];
+}
+
+// AcceptFriendRequestResponse - ответ на принятие заявки
+message AcceptFriendRequestResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "AcceptFriendRequestResponse"
+      description: "Ответ на принятие заявки в друзья"
+    }
+  };
+
+  // Принятая заявка
+  FriendRequest request = 1 [json_name = "request"];
+}
+
+// DeclineFriendRequestRequest - запрос на отклонение заявки в друзья
+message DeclineFriendRequestRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "DeclineFriendRequestRequest"
+      description: "Запрос на отклонение заявки в друзья"
+      required: ["request_id"]
+    }
+  };
+
+  // Id заявки
+  string request_id = 1 [
+    json_name = "request_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "request_id"
+      description: "Id заявки"
+      example: "\"7c9fd952-5c7d-4268-acfb-85563dba1a74\""
+      type: STRING
+    }
+  ];
+}
+
+// DeclineFriendRequestResponse - ответ на отклонение заявки
+message DeclineFriendRequestResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "DeclineFriendRequestResponse"
+      description: "Ответ на отклонение заявки в друзья"
+    }
+  };
+
+  // Отклонённая заявка
+  FriendRequest request = 1 [json_name = "request"];
+}
+
+// RemoveFriendRequest - запрос на удаление из друзей
+message RemoveFriendRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RemoveFriendRequest"
+      description: "Запрос на удаление пользователя из друзей"
+      required: ["user_id"]
+    }
+  };
+
+  // Id друга, которого нужно удалить
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id друга, которого нужно удалить"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// RemoveFriendResponse - ответ на удаление из друзей
+message RemoveFriendResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RemoveFriendResponse"
+      description: "Ответ на удаление пользователя из друзей"
+    }
+  };
+}
+
+// ListFriendsRequest - запрос списка друзей
+message ListFriendsRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListFriendsRequest"
+      description: "Запрос списка друзей"
+      required: ["user_id"]
+    }
+  };
+
+  // Id пользователя
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+
+  // Лимит количества друзей
+  int32 limit = 2 [
+    json_name = "limit",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "limit"
+      description: "Количество друзей для выборки"
+      example: "20"
+      type: INTEGER
+    }
+  ];
+
+  // Курсор для постраничной навигации
+  string cursor = 3 [json_name = "cursor"];
+}
+
+// ListFriendsResponse - ответ списка друзей
+message ListFriendsResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListFriendsResponse"
+      description: "Ответ списка друзей пользователя"
+    }
+  };
+
+  // Id друзей
+  repeated string friend_user_ids = 1 [
+    json_name = "friend_user_ids",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "friend_user_ids"
+      description: "Id друзей пользователя"
+      example: "[\"123e4567-e89b-12d3-a456-426614174111\", \"123e4567-e89b-12d3-a456-426614174222\"]"
+      type: ARRAY
+    }
+  ];
+
+  // Следующий курсор
+  string next_cursor = 2 [json_name = "next_cursor"];
+}
+
+// FriendRequestStatus - статус заявки в друзья
+enum FriendRequestStatus {
+  // Не указан
+  FRIEND_REQUEST_STATUS_UNSPECIFIED = 0;
+  // Ожидает ответа
+  FRIEND_REQUEST_STATUS_PENDING = 1;
+  // Принята
+  FRIEND_REQUEST_STATUS_ACCEPTED = 2;
+  // Отклонена
+  FRIEND_REQUEST_STATUS_DECLINED = 3;
+}
+
+// FriendRequest - структура заявки в друзья
+message FriendRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "FriendRequest"
+      description: "Структура заявки в друзья"
+    }
+  };
+
+  // Id заявки
+  string request_id = 1 [
+    json_name = "request_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "request_id"
+      description: "Id заявки"
+      example: "\"7c9fd952-5c7d-4268-acfb-85563dba1a74\""
+      type: STRING
+    }
+  ];
+
+  // Статус заявки
+  FriendRequestStatus status = 2 [
+    json_name = "status",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "status"
+      description: "Статус заявки"
+      example: "\"PENDING\""
+      type: STRING
+    }
+  ];
+}
