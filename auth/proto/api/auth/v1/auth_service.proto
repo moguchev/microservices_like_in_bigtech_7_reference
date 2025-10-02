@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package api.auth.v1;
+
+import "api/auth/v1/auth_messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "auth/pkg/api/auth/v1;auth";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "AuthService"
+    version: "0.0.1"
+  }
+  schemes: HTTP
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+};
+
+// AuthService - сервис аутентификации и авторизации
+service AuthService {
+  // Регистрация по email/паролю
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/v1/register"
+      body: "*"
+    };
+  }
+
+  // Вход по email/паролю и выдача токенов
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/login"
+      body: "*"
+    };
+  }
+
+  // Обновление токенов
+  rpc Refresh(RefreshRequest) returns (RefreshResponse) {
+    option (google.api.http) = {
+      post: "/v1/refresh"
+      body: "*"
+    };
+  }
+}

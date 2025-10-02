@@ -1,0 +1,65 @@
+networks:
+  messenger:
+    driver: bridge
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
+    image: auth-service:latest
+    container_name: auth-service
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+    networks:
+      - messenger
+  chat:
+    build:
+      context: .
+      dockerfile: chat/Dockerfile
+    image: chat-service:latest
+    container_name: chat-service
+    ports:
+      - "8082:8080"
+    restart: unless-stopped
+    networks:
+      - messenger
+  social:
+    build:
+      context: .
+      dockerfile: social/Dockerfile
+    image: social-service:latest
+    container_name: social-service
+    ports:
+      - "8083:8080"
+    restart: unless-stopped
+    networks:
+      - messenger
+  users:
+    build:
+      context: .
+      dockerfile: users/Dockerfile
+    image: users-service:latest
+    container_name: users-service
+    ports:
+      - "8084:8080"
+    restart: unless-stopped
+    networks:
+      - messenger
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    image: gateway-service:latest
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      - auth
+      - chat
+      - social
+      - users
+    networks:
+      - messenger

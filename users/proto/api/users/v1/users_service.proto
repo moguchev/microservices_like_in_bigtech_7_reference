@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package api.users.v1;
+
+import "api/users/v1/users_messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "users/pkg/api/users/v1;user";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "UserService"
+    version: "0.0.1"
+  }
+  schemes: HTTP
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+};
+
+// UserService - управление профилями пользователей
+service UserService {
+  // Создать профиль
+  rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "*"
+    };
+  }
+
+  // Обновить профиль
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse) {
+    option (google.api.http) = {
+      patch: "/v1/users/{user_id}"
+      body: "*"
+    };
+  }
+
+  // Получить профиль по ID
+  rpc GetProfileByID(GetProfileByIDRequest) returns (GetProfileByIDResponse) {
+    option (google.api.http) = {get: "/v1/users/{id}"};
+  }
+
+  // Получить профиль по никнейму
+  rpc GetProfileByNickname(GetProfileByNicknameRequest) returns (GetProfileByNicknameResponse) {
+    option (google.api.http) = {get: "/v1/users/nickname/{nickname}"};
+  }
+
+  // Поиск пользователей по никнейму
+  rpc SearchByNickname(SearchByNicknameRequest) returns (SearchByNicknameResponse) {
+    option (google.api.http) = {get: "/v1/users/search"};
+  }
+}

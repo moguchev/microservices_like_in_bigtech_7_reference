@@ -1,0 +1,539 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ChatService",
+    "version": "0.0.1"
+  },
+  "tags": [
+    {
+      "name": "ChatService"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api.chat.v1.ChatService/StreamMessages": {
+      "post": {
+        "summary": "Not available via REST",
+        "description": "This method uses gRPC streaming",
+        "operationId": "ChatService_StreamMessages",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1StreamMessagesResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1StreamMessagesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Запрос на получение потока сообщений",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1StreamMessagesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ],
+        "deprecated": true
+      }
+    },
+    "/v1/chats/direct": {
+      "post": {
+        "summary": "Создать личный чат",
+        "operationId": "ChatService_CreateDirectChat",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateDirectChatResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Запрос на создание личного чата",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateDirectChatRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    },
+    "/v1/chats/{chat_id}": {
+      "get": {
+        "summary": "Получить информацию о чате",
+        "operationId": "ChatService_GetChat",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetChatResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chat_id",
+            "description": "Id чата",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    },
+    "/v1/chats/{chat_id}/members": {
+      "get": {
+        "summary": "Список участников чата",
+        "operationId": "ChatService_ListChatMembers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListChatMembersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chat_id",
+            "description": "Id чата",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    },
+    "/v1/chats/{chat_id}/messages": {
+      "get": {
+        "summary": "История сообщений",
+        "operationId": "ChatService_ListMessages",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListMessagesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chat_id",
+            "description": "Id чата",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "limit\n\nКоличество сообщений для выборки",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "cursor",
+            "description": "Курсор для пагинации",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      },
+      "post": {
+        "summary": "Отправить сообщение",
+        "operationId": "ChatService_SendMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SendMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chat_id",
+            "description": "Id чата",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChatServiceSendMessageBody"
+            }
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/chats": {
+      "get": {
+        "summary": "Список чатов пользователя",
+        "operationId": "ChatService_ListUserChats",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListUserChatsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "description": "Id пользователя",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ChatServiceSendMessageBody": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "example": "Привет!",
+          "description": "Текст сообщения",
+          "title": "text"
+        }
+      },
+      "description": "Запрос на отправку сообщения",
+      "title": "SendMessageRequest",
+      "required": [
+        "text"
+      ]
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Chat": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "string",
+          "example": "987e6543-e21b-12d3-a456-426614174999",
+          "description": "Id чата",
+          "title": "chat_id"
+        },
+        "participant_ids": {
+          "type": "array",
+          "example": [
+            "123e4567-e89b-12d3-a456-426614174000",
+            "223e4567-e89b-12d3-a456-426614174001"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Id участников чата",
+          "title": "participant_ids"
+        }
+      },
+      "description": "Структура чата",
+      "title": "Chat"
+    },
+    "v1CreateDirectChatRequest": {
+      "type": "object",
+      "properties": {
+        "participant_id": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426614174001",
+          "description": "Id собеседника",
+          "title": "participant_id"
+        }
+      },
+      "description": "Запрос на создание личного чата",
+      "title": "CreateDirectChatRequest",
+      "required": [
+        "participant_id"
+      ]
+    },
+    "v1CreateDirectChatResponse": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "string",
+          "example": "987e6543-e21b-12d3-a456-426614174999",
+          "description": "Id созданного чата",
+          "title": "chat_id"
+        }
+      },
+      "description": "Ответ на создание чата",
+      "title": "CreateDirectChatResponse"
+    },
+    "v1GetChatResponse": {
+      "type": "object",
+      "properties": {
+        "chat": {
+          "type": "object",
+          "$ref": "#/definitions/v1Chat",
+          "description": "Данные чата",
+          "title": "chat"
+        }
+      },
+      "description": "Ответ получения чата",
+      "title": "GetChatResponse"
+    },
+    "v1ListChatMembersResponse": {
+      "type": "object",
+      "properties": {
+        "user_ids": {
+          "type": "array",
+          "example": [
+            "123e4567-e89b-12d3-a456-426614174000",
+            "223e4567-e89b-12d3-a456-426614174001"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Список Id участников чата",
+          "title": "user_ids"
+        }
+      },
+      "description": "Ответ списка участников чата",
+      "title": "ListChatMembersResponse"
+    },
+    "v1ListMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Message"
+          },
+          "description": "Список сообщений",
+          "title": "messages"
+        },
+        "next_cursor": {
+          "type": "string",
+          "title": "Следующий курсор"
+        }
+      },
+      "description": "Ответ списка сообщений",
+      "title": "ListMessagesResponse"
+    },
+    "v1ListUserChatsResponse": {
+      "type": "object",
+      "properties": {
+        "chats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Chat"
+          },
+          "description": "Список чатов пользователя",
+          "title": "chats"
+        }
+      },
+      "description": "Ответ списка чатов пользователя",
+      "title": "ListUserChatsResponse"
+    },
+    "v1Message": {
+      "type": "object",
+      "properties": {
+        "message_id": {
+          "type": "string",
+          "example": "abc123-message-uuid",
+          "description": "Id сообщения",
+          "title": "message_id"
+        },
+        "chat_id": {
+          "type": "string",
+          "example": "987e6543-e21b-12d3-a456-426614174999",
+          "description": "Id чата, к которому относится сообщение",
+          "title": "chat_id"
+        },
+        "sender_id": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426614174000",
+          "description": "Id пользователя, отправившего сообщение",
+          "title": "sender_id"
+        },
+        "text": {
+          "type": "string",
+          "example": "Привет, мир!",
+          "description": "Текст сообщения",
+          "title": "text"
+        },
+        "created_at_unix_ms": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1694000000000,
+          "description": "Метка времени создания сообщения (unix ms)",
+          "title": "created_at_unix_ms"
+        }
+      },
+      "description": "Структура сообщения",
+      "title": "Message"
+    },
+    "v1SendMessageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "object",
+          "$ref": "#/definitions/v1Message",
+          "description": "Отправленное сообщение",
+          "title": "message"
+        }
+      },
+      "description": "Ответ на отправку сообщения",
+      "title": "SendMessageResponse"
+    },
+    "v1StreamMessagesRequest": {
+      "type": "object",
+      "properties": {
+        "chat_id": {
+          "type": "string",
+          "example": "987e6543-e21b-12d3-a456-426614174999",
+          "description": "Id чата",
+          "title": "chat_id"
+        },
+        "since_unix_ms": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1694000000000,
+          "description": "Временная метка в миллисекундах (unix)",
+          "title": "since_unix_ms"
+        }
+      },
+      "description": "Запрос на получение потока сообщений",
+      "title": "StreamMessagesRequest",
+      "required": [
+        "chat_id"
+      ]
+    },
+    "v1StreamMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "object",
+          "$ref": "#/definitions/v1Message",
+          "description": "Новое сообщение",
+          "title": "message"
+        }
+      },
+      "description": "Ответ потока сообщений",
+      "title": "StreamMessagesResponse"
+    }
+  }
+}

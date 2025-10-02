@@ -1,0 +1,460 @@
+syntax = "proto3";
+
+package api.chat.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "chat/pkg/api/chat/v1;chat";
+
+// CreateDirectChatRequest - запрос на создание личного чата
+message CreateDirectChatRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "CreateDirectChatRequest"
+      description: "Запрос на создание личного чата"
+      required: ["participant_id"]
+    }
+  };
+
+  // Id собеседника
+  string participant_id = 1 [
+    json_name = "participant_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "participant_id"
+      description: "Id собеседника"
+      example: "\"123e4567-e89b-12d3-a456-426614174001\""
+      type: STRING
+    }
+  ];
+}
+
+// CreateDirectChatResponse - ответ на создание чата
+message CreateDirectChatResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "CreateDirectChatResponse"
+      description: "Ответ на создание чата"
+    }
+  };
+
+  // Id созданного чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id созданного чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+}
+
+// GetChatRequest - запрос получения чата
+message GetChatRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetChatRequest"
+      description: "Запрос на получение чата"
+      required: ["chat_id"]
+    }
+  };
+
+  // Id чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+}
+
+// GetChatResponse - ответ получения чата
+message GetChatResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetChatResponse"
+      description: "Ответ получения чата"
+    }
+  };
+
+  // Данные чата
+  Chat chat = 1 [
+    json_name = "chat",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat"
+      description: "Данные чата"
+      type: OBJECT
+    }
+  ];
+}
+
+// ListUserChatsRequest - запрос списка чатов пользователя
+message ListUserChatsRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListUserChatsRequest"
+      description: "Запрос списка чатов пользователя"
+      required: ["user_id"]
+    }
+  };
+
+  // Id пользователя
+  string user_id = 1 [
+    json_name = "user_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_id"
+      description: "Id пользователя"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+}
+
+// ListUserChatsResponse - ответ списка чатов пользователя
+message ListUserChatsResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListUserChatsResponse"
+      description: "Ответ списка чатов пользователя"
+    }
+  };
+
+  // Список чатов пользователя
+  repeated Chat chats = 1 [
+    json_name = "chats",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chats"
+      description: "Список чатов пользователя"
+      type: ARRAY
+    }
+  ];
+}
+
+// ListChatMembersRequest - запрос списка участников чата
+message ListChatMembersRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListChatMembersRequest"
+      description: "Запрос списка участников чата"
+      required: ["chat_id"]
+    }
+  };
+
+  // Id чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+}
+
+// ListChatMembersResponse - ответ списка участников чата
+message ListChatMembersResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListChatMembersResponse"
+      description: "Ответ списка участников чата"
+    }
+  };
+
+  // Список Id участников
+  repeated string user_ids = 1 [
+    json_name = "user_ids",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "user_ids"
+      description: "Список Id участников чата"
+      example: "[\"123e4567-e89b-12d3-a456-426614174000\", \"223e4567-e89b-12d3-a456-426614174001\"]"
+      type: ARRAY
+    }
+  ];
+}
+
+// SendMessageRequest - запрос на отправку сообщения
+message SendMessageRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SendMessageRequest"
+      description: "Запрос на отправку сообщения"
+      required: [
+        "chat_id",
+        "text"
+      ]
+    }
+  };
+
+  // Id чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+
+  // Текст сообщения
+  string text = 2 [
+    json_name = "text",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "text"
+      description: "Текст сообщения"
+      example: "\"Привет!\""
+      type: STRING
+    }
+  ];
+}
+
+// SendMessageResponse - ответ на отправку сообщения
+message SendMessageResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "SendMessageResponse"
+      description: "Ответ на отправку сообщения"
+    }
+  };
+
+  // Отправленное сообщение
+  Message message = 1 [
+    json_name = "message",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "message"
+      description: "Отправленное сообщение"
+      type: OBJECT
+    }
+  ];
+}
+
+// ListMessagesRequest - запрос списка сообщений
+message ListMessagesRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListMessagesRequest"
+      description: "Запрос списка сообщений"
+      required: ["chat_id"]
+    }
+  };
+
+  // Id чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+
+  // Количество сообщений
+  int32 limit = 2 [
+    json_name = "limit",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "limit"
+      description: "Количество сообщений для выборки"
+      example: "50"
+      type: INTEGER
+    }
+  ];
+
+  // Курсор для пагинации
+  string cursor = 3 [json_name = "cursor"];
+}
+
+// ListMessagesResponse - ответ списка сообщений
+message ListMessagesResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "ListMessagesResponse"
+      description: "Ответ списка сообщений"
+    }
+  };
+
+  // Список сообщений
+  repeated Message messages = 1 [
+    json_name = "messages",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "messages"
+      description: "Список сообщений"
+      type: ARRAY
+    }
+  ];
+
+  // Следующий курсор
+  string next_cursor = 2 [json_name = "next_cursor"];
+}
+
+// StreamMessagesRequest - запрос на поток сообщений
+message StreamMessagesRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "StreamMessagesRequest"
+      description: "Запрос на получение потока сообщений"
+      required: ["chat_id"]
+    }
+  };
+
+  // Id чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (buf.validate.field).string.min_len = 1,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+
+  // Временная метка (unix ms)
+  int64 since_unix_ms = 2 [
+    json_name = "since_unix_ms",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "since_unix_ms"
+      description: "Временная метка в миллисекундах (unix)"
+      example: "1694000000000"
+      type: INTEGER
+    }
+  ];
+}
+
+// StreamMessagesResponse - ответ потока сообщений
+message StreamMessagesResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "StreamMessagesResponse"
+      description: "Ответ потока сообщений"
+    }
+  };
+
+  // Новое сообщение
+  Message message = 1 [
+    json_name = "message",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "message"
+      description: "Новое сообщение"
+      type: OBJECT
+    }
+  ];
+}
+
+// Chat - структура чата
+message Chat {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Chat"
+      description: "Структура чата"
+    }
+  };
+
+  // Id чата
+  string chat_id = 1 [
+    json_name = "chat_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+
+  // Id участников
+  repeated string participant_ids = 2 [
+    json_name = "participant_ids",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "participant_ids"
+      description: "Id участников чата"
+      example: "[\"123e4567-e89b-12d3-a456-426614174000\", \"223e4567-e89b-12d3-a456-426614174001\"]"
+      type: ARRAY
+    }
+  ];
+}
+
+// Message - структура сообщения
+message Message {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Message"
+      description: "Структура сообщения"
+    }
+  };
+
+  // Id сообщения
+  string message_id = 1 [
+    json_name = "message_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "message_id"
+      description: "Id сообщения"
+      example: "\"abc123-message-uuid\""
+      type: STRING
+    }
+  ];
+
+  // Id чата
+  string chat_id = 2 [
+    json_name = "chat_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "chat_id"
+      description: "Id чата, к которому относится сообщение"
+      example: "\"987e6543-e21b-12d3-a456-426614174999\""
+      type: STRING
+    }
+  ];
+
+  // Id отправителя
+  string sender_id = 3 [
+    json_name = "sender_id",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "sender_id"
+      description: "Id пользователя, отправившего сообщение"
+      example: "\"123e4567-e89b-12d3-a456-426614174000\""
+      type: STRING
+    }
+  ];
+
+  // Текст сообщения
+  string text = 4 [
+    json_name = "text",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "text"
+      description: "Текст сообщения"
+      example: "\"Привет, мир!\""
+      type: STRING
+    }
+  ];
+
+  // Время создания сообщения (unix ms)
+  int64 created_at_unix_ms = 5 [
+    json_name = "created_at_unix_ms",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "created_at_unix_ms"
+      description: "Метка времени создания сообщения (unix ms)"
+      example: "1694000000000"
+      type: INTEGER
+    }
+  ];
+}

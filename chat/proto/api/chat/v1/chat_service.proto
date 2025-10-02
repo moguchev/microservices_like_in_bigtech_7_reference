@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package api.chat.v1;
+
+import "api/chat/v1/chat_messages.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "chat/pkg/api/chat/v1;chat";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "ChatService"
+    version: "0.0.1"
+  }
+  schemes: HTTP
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+};
+
+// ChatService - сервис управления чатами и отправки сообщений
+service ChatService {
+  // Создать личный чат
+  rpc CreateDirectChat(CreateDirectChatRequest) returns (CreateDirectChatResponse) {
+    option (google.api.http) = {
+      post: "/v1/chats/direct"
+      body: "*"
+    };
+  }
+
+  // Получить информацию о чате
+  rpc GetChat(GetChatRequest) returns (GetChatResponse) {
+    option (google.api.http) = {get: "/v1/chats/{chat_id}"};
+  }
+
+  // Список чатов пользователя
+  rpc ListUserChats(ListUserChatsRequest) returns (ListUserChatsResponse) {
+    option (google.api.http) = {get: "/v1/users/{user_id}/chats"};
+  }
+
+  // Список участников чата
+  rpc ListChatMembers(ListChatMembersRequest) returns (ListChatMembersResponse) {
+    option (google.api.http) = {get: "/v1/chats/{chat_id}/members"};
+  }
+
+  // Отправить сообщение
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {
+    option (google.api.http) = {
+      post: "/v1/chats/{chat_id}/messages"
+      body: "*"
+    };
+  }
+
+  // История сообщений
+  rpc ListMessages(ListMessagesRequest) returns (ListMessagesResponse) {
+    option (google.api.http) = {get: "/v1/chats/{chat_id}/messages"};
+  }
+
+  // Стрим новых сообщений
+  rpc StreamMessages(StreamMessagesRequest) returns (stream StreamMessagesResponse) {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      deprecated: true
+      summary: "Not available via REST"
+      description: "This method uses gRPC streaming"
+    };
+  }
+}
