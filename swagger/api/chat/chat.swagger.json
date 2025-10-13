@@ -195,14 +195,15 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           {
-            "name": "cursor",
-            "description": "Курсор для пагинации",
+            "name": "last_message_time",
+            "description": "last_message_time\n\nВремя отправления последнего сообщения в списке (курсор)",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           }
         ],
         "tags": [
@@ -424,9 +425,11 @@
           "description": "Список сообщений",
           "title": "messages"
         },
-        "next_cursor": {
+        "last_message_time": {
           "type": "string",
-          "title": "Следующий курсор"
+          "format": "date-time",
+          "description": "Следующее время отправления последнего сообщения в списке (курсор)",
+          "title": "last_message_time"
         }
       },
       "description": "Ответ списка сообщений",
@@ -475,12 +478,11 @@
           "description": "Текст сообщения",
           "title": "text"
         },
-        "created_at_unix_ms": {
-          "type": "integer",
-          "format": "int64",
-          "example": 1694000000000,
-          "description": "Метка времени создания сообщения (unix ms)",
-          "title": "created_at_unix_ms"
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Метка времени создания сообщения",
+          "title": "created_at"
         }
       },
       "description": "Структура сообщения",
@@ -508,12 +510,11 @@
           "description": "Id чата",
           "title": "chat_id"
         },
-        "since_unix_ms": {
-          "type": "integer",
-          "format": "int64",
-          "example": 1694000000000,
-          "description": "Временная метка в миллисекундах (unix)",
-          "title": "since_unix_ms"
+        "since_message_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Время отправления последнего сообщения",
+          "title": "since_message_time"
         }
       },
       "description": "Запрос на получение потока сообщений",

@@ -182,14 +182,15 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           {
-            "name": "cursor",
-            "description": "Курсор для постраничной навигации",
+            "name": "last_accept_request_time",
+            "description": "last_accept_request_time\n\nПоследнее время добавления в друзья в списке (курсор для постраничной навигации)",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           }
         ],
         "tags": [
@@ -328,9 +329,11 @@
           "description": "Id друзей пользователя",
           "title": "friend_user_ids"
         },
-        "next_cursor": {
+        "last_accept_request_time": {
           "type": "string",
-          "title": "Следующий курсор"
+          "format": "date-time",
+          "description": "Последнее время добавления в друзья в списке (курсор для постраничной навигации)",
+          "title": "last_accept_request_time"
         }
       },
       "description": "Ответ списка друзей пользователя",

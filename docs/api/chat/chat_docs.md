@@ -150,8 +150,8 @@ ListMessagesRequest - запрос списка сообщений
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | chat_id | [string](#string) |  | Id чата |
-| limit | [int32](#int32) |  | Количество сообщений |
-| cursor | [string](#string) |  | Курсор для пагинации |
+| limit | [uint32](#uint32) |  | Количество сообщений |
+| last_message_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Время отправления последнего сообщения в списке (курсор) |
 
 
 
@@ -167,7 +167,7 @@ ListMessagesResponse - ответ списка сообщений
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | messages | [Message](#api-chat-v1-Message) | repeated | Список сообщений |
-| next_cursor | [string](#string) |  | Следующий курсор |
+| last_message_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Следующее время отправления последнего сообщения в списке (курсор) |
 
 
 
@@ -216,7 +216,7 @@ Message - структура сообщения
 | chat_id | [string](#string) |  | Id чата |
 | sender_id | [string](#string) |  | Id отправителя |
 | text | [string](#string) |  | Текст сообщения |
-| created_at_unix_ms | [int64](#int64) |  | Время создания сообщения (unix ms) |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Время создания сообщения |
 
 
 
@@ -263,7 +263,7 @@ StreamMessagesRequest - запрос на поток сообщений
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | chat_id | [string](#string) |  | Id чата |
-| since_unix_ms | [int64](#int64) |  | Временная метка (unix ms) |
+| since_message_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Время отправления последнего сообщения |
 
 
 

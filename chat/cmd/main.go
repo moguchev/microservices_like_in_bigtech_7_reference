@@ -1,48 +1,34 @@
 package main
 
 import (
+	"context"
 	"log"
-	"net"
 
-	"chat/internal"
-	pb "chat/pkg/api/chat/v1"
-	"lib/grpc_utils"
-	grpc_middleware "lib/middleware/grpc"
+	"chat/internal/app/server"
 
-	"github.com/bufbuild/protovalidate-go"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"go.uber.org/dig"
 )
 
-const address = ":8080"
-
 func main() {
-	server, err := internal.NewServer()
+	container := dig.New()
+
+	_ = container.Provide(provideContext)
+	_ = container.Provide(provideChatRepository)
+	_ = container.Provide(provideChatUsecase)
+	_ = container.Provide(provideChatController)
+	_ = container.Provide(provideValidator)
+	_ = container.Provide(provideGRPCMiddlewares)
+	_ = container.Provide(provideServerConfig)
+	_ = container.Provide(provideServer)
+
+	err := container.Invoke(func(ctx context.Context, cancel context.CancelFunc, srv *server.Server) {
+		defer cancel()
+		if err := srv.Run(ctx); err != nil {
+			log.Fatalf("run server: %v", err)
+		}
+	})
+
 	if err != nil {
-		log.Fatalf("failed to create server: %v", err)
-	}
-
-	validator, err := protovalidate.New(protovalidate.WithDisableLazy(false))
-	if err != nil {
-		log.Fatalf("server: failed to initialize validator: %s", err)
-	}
-
-	grpcServerOptions := grpc_utils.UnaryInterceptorsToGrpcServerOptions(
-		grpc_middleware.ValidateUnaryServerInterceptor(validator),
-	)
-
-	grpcServer := grpc.NewServer(grpcServerOptions...)
-	pb.RegisterChatServiceServer(grpcServer, server)
-
-	reflection.Register(grpcServer)
-
-	lis, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	log.Printf("server listening at %v", lis.Addr())
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Fatalf("failed to invoke container: %v", err)
 	}
 }

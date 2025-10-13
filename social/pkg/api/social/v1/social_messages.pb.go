@@ -12,6 +12,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -538,11 +539,11 @@ type ListFriendsRequest struct {
 	// Id пользователя
 	UserId string `protobuf:"bytes,1,opt,name=user_id,proto3" json:"user_id,omitempty"`
 	// Лимит количества друзей
-	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	// Курсор для постраничной навигации
-	Cursor        string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Limit uint32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Последнее время добавления в друзья в списке (курсор для постраничной навигации)
+	LastAcceptRequestTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_accept_request_time,proto3" json:"last_accept_request_time,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *ListFriendsRequest) Reset() {
@@ -582,18 +583,18 @@ func (x *ListFriendsRequest) GetUserId() string {
 	return ""
 }
 
-func (x *ListFriendsRequest) GetLimit() int32 {
+func (x *ListFriendsRequest) GetLimit() uint32 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *ListFriendsRequest) GetCursor() string {
+func (x *ListFriendsRequest) GetLastAcceptRequestTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Cursor
+		return x.LastAcceptRequestTime
 	}
-	return ""
+	return nil
 }
 
 // ListFriendsResponse - ответ списка друзей
@@ -601,10 +602,10 @@ type ListFriendsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Id друзей
 	FriendUserIds []string `protobuf:"bytes,1,rep,name=friend_user_ids,proto3" json:"friend_user_ids,omitempty"`
-	// Следующий курсор
-	NextCursor    string `protobuf:"bytes,2,opt,name=next_cursor,proto3" json:"next_cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Последнее время добавления в друзья в списке (следующий курсор)
+	LastAcceptRequestTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=last_accept_request_time,proto3" json:"last_accept_request_time,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *ListFriendsResponse) Reset() {
@@ -644,11 +645,11 @@ func (x *ListFriendsResponse) GetFriendUserIds() []string {
 	return nil
 }
 
-func (x *ListFriendsResponse) GetNextCursor() string {
+func (x *ListFriendsResponse) GetLastAcceptRequestTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextCursor
+		return x.LastAcceptRequestTime
 	}
-	return ""
+	return nil
 }
 
 // FriendRequest - структура заявки в друзья
@@ -710,52 +711,52 @@ var File_api_social_v1_social_messages_proto protoreflect.FileDescriptor
 
 const file_api_social_v1_social_messages_proto_rawDesc = "" +
 	"\n" +
-	"#api/social/v1/social_messages.proto\x12\rapi.social.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\xbc\x02\n" +
-	"\x18SendFriendRequestRequest\x12\xb3\x01\n" +
-	"\auser_id\x18\x01 \x01(\tB\x98\x01\x92A\x8a\x01*\auser_id2SId пользователя, которому отправляется заявкаJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id:j\x92Ag\n" +
+	"#api/social/v1/social_messages.proto\x12\rapi.social.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\xbd\x02\n" +
+	"\x18SendFriendRequestRequest\x12\xb4\x01\n" +
+	"\auser_id\x18\x01 \x01(\tB\x99\x01\x92A\x8a\x01*\auser_id2SId пользователя, которому отправляется заявкаJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id:j\x92Ag\n" +
 	"e*\x18SendFriendRequestRequest2?Запрос на отправку заявки в друзья\xd2\x01\auser_id\"\x93\x01\n" +
 	"\x19SendFriendRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.api.social.v1.FriendRequestR\arequest:>\x92A;\n" +
-	"9*\x19SendFriendRequestResponse2\x1cОтвет SendFriendRequest\"\xa8\x02\n" +
-	"\x13ListRequestsRequest\x12\xb2\x01\n" +
-	"\auser_id\x18\x01 \x01(\tB\x97\x01\x92A\x89\x01*\auser_id2RId пользователя, для которого получаем заявкиJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id:\\\x92AY\n" +
+	"9*\x19SendFriendRequestResponse2\x1cОтвет SendFriendRequest\"\xa9\x02\n" +
+	"\x13ListRequestsRequest\x12\xb3\x01\n" +
+	"\auser_id\x18\x01 \x01(\tB\x98\x01\x92A\x89\x01*\auser_id2RId пользователя, для которого получаем заявкиJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id:\\\x92AY\n" +
 	"W*\x13ListRequestsRequest26Запрос списка заявок в друзья\xd2\x01\auser_id\"\xe1\x01\n" +
 	"\x14ListRequestsResponse\x12v\n" +
 	"\brequests\x18\x01 \x03(\v2\x1c.api.social.v1.FriendRequestB<\x92A9*\brequests2)Список заявок в друзья\x9a\x02\x01\x01R\brequests:Q\x92AN\n" +
-	"L*\x14ListRequestsResponse24Ответ списка заявок в друзья\"\x85\x02\n" +
-	"\x1aAcceptFriendRequestRequest\x12v\n" +
+	"L*\x14ListRequestsResponse24Ответ списка заявок в друзья\"\x86\x02\n" +
+	"\x1aAcceptFriendRequestRequest\x12w\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tBV\x92AI*\n" +
-	"request_id2\x0fId заявкиJ&\"7c9fd952-5c7d-4268-acfb-85563dba1a74\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\n" +
+	"request_id\x18\x01 \x01(\tBW\x92AI*\n" +
+	"request_id2\x0fId заявкиJ&\"7c9fd952-5c7d-4268-acfb-85563dba1a74\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"request_id:o\x92Al\n" +
 	"j*\x1aAcceptFriendRequestRequest2?Запрос на принятие заявки в друзья\xd2\x01\n" +
 	"request_id\"\xb8\x01\n" +
 	"\x1bAcceptFriendRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.api.social.v1.FriendRequestR\arequest:a\x92A^\n" +
-	"\\*\x1bAcceptFriendRequestResponse2=Ответ на принятие заявки в друзья\"\x8b\x02\n" +
-	"\x1bDeclineFriendRequestRequest\x12v\n" +
+	"\\*\x1bAcceptFriendRequestResponse2=Ответ на принятие заявки в друзья\"\x8c\x02\n" +
+	"\x1bDeclineFriendRequestRequest\x12w\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\tBV\x92AI*\n" +
-	"request_id2\x0fId заявкиJ&\"7c9fd952-5c7d-4268-acfb-85563dba1a74\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\n" +
+	"request_id\x18\x01 \x01(\tBW\x92AI*\n" +
+	"request_id2\x0fId заявкиJ&\"7c9fd952-5c7d-4268-acfb-85563dba1a74\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"request_id:t\x92Aq\n" +
 	"o*\x1bDeclineFriendRequestRequest2CЗапрос на отклонение заявки в друзья\xd2\x01\n" +
 	"request_id\"\xbe\x01\n" +
 	"\x1cDeclineFriendRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.api.social.v1.FriendRequestR\arequest:f\x92Ac\n" +
-	"a*\x1cDeclineFriendRequestResponse2AОтвет на отклонение заявки в друзья\"\xa4\x02\n" +
-	"\x13RemoveFriendRequest\x12\x97\x01\n" +
-	"\auser_id\x18\x01 \x01(\tB}\x92Ap*\auser_id29Id друга, которого нужно удалитьJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id:s\x92Ap\n" +
+	"a*\x1cDeclineFriendRequestResponse2AОтвет на отклонение заявки в друзья\"\xa5\x02\n" +
+	"\x13RemoveFriendRequest\x12\x98\x01\n" +
+	"\auser_id\x18\x01 \x01(\tB~\x92Ap*\auser_id29Id друга, которого нужно удалитьJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id:s\x92Ap\n" +
 	"n*\x13RemoveFriendRequest2MЗапрос на удаление пользователя из друзей\xd2\x01\auser_id\"\x80\x01\n" +
 	"\x14RemoveFriendResponse:h\x92Ae\n" +
-	"c*\x14RemoveFriendResponse2KОтвет на удаление пользователя из друзей\"\xd7\x02\n" +
-	"\x12ListFriendsRequest\x12y\n" +
-	"\auser_id\x18\x01 \x01(\tB_\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id\x12a\n" +
-	"\x05limit\x18\x02 \x01(\x05BK\x92AH*\x05limit27Количество друзей для выборкиJ\x0220\x9a\x02\x01\x03R\x05limit\x12\x16\n" +
-	"\x06cursor\x18\x03 \x01(\tR\x06cursor:K\x92AH\n" +
-	"F*\x12ListFriendsRequest2&Запрос списка друзей\xd2\x01\auser_id\"\xd5\x02\n" +
+	"c*\x14RemoveFriendResponse2KОтвет на удаление пользователя из друзей\"\xd8\x04\n" +
+	"\x12ListFriendsRequest\x12z\n" +
+	"\auser_id\x18\x01 \x01(\tB`\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id\x12a\n" +
+	"\x05limit\x18\x02 \x01(\rBK\x92AH*\x05limit27Количество друзей для выборкиJ\x0220\x9a\x02\x01\x03R\x05limit\x12\x95\x02\n" +
+	"\x18last_accept_request_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\xbc\x01\x92A\xb5\x01*\x18last_accept_request_time2\x94\x01Последнее время добавления в друзья в списке (курсор для постраничной навигации)\x9a\x02\x01\a\xe0A\x01R\x18last_accept_request_time:K\x92AH\n" +
+	"F*\x12ListFriendsRequest2&Запрос списка друзей\xd2\x01\auser_id\"\xc8\x04\n" +
 	"\x13ListFriendsResponse\x12\xc0\x01\n" +
-	"\x0ffriend_user_ids\x18\x01 \x03(\tB\x95\x01\x92A\x91\x01*\x0ffriend_user_ids2(Id друзей пользователяJP[\"123e4567-e89b-12d3-a456-426614174111\", \"123e4567-e89b-12d3-a456-426614174222\"]\x9a\x02\x01\x01R\x0ffriend_user_ids\x12 \n" +
-	"\vnext_cursor\x18\x02 \x01(\tR\vnext_cursor:Y\x92AV\n" +
+	"\x0ffriend_user_ids\x18\x01 \x03(\tB\x95\x01\x92A\x91\x01*\x0ffriend_user_ids2(Id друзей пользователяJP[\"123e4567-e89b-12d3-a456-426614174111\", \"123e4567-e89b-12d3-a456-426614174222\"]\x9a\x02\x01\x01R\x0ffriend_user_ids\x12\x92\x02\n" +
+	"\x18last_accept_request_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\xb9\x01\x92A\xb5\x01*\x18last_accept_request_time2\x94\x01Последнее время добавления в друзья в списке (курсор для постраничной навигации)\x9a\x02\x01\aR\x18last_accept_request_time:Y\x92AV\n" +
 	"T*\x13ListFriendsResponse2=Ответ списка друзей пользователя\"\xb7\x02\n" +
 	"\rFriendRequest\x12l\n" +
 	"\n" +
@@ -800,18 +801,21 @@ var file_api_social_v1_social_messages_proto_goTypes = []any{
 	(*ListFriendsRequest)(nil),           // 11: api.social.v1.ListFriendsRequest
 	(*ListFriendsResponse)(nil),          // 12: api.social.v1.ListFriendsResponse
 	(*FriendRequest)(nil),                // 13: api.social.v1.FriendRequest
+	(*timestamppb.Timestamp)(nil),        // 14: google.protobuf.Timestamp
 }
 var file_api_social_v1_social_messages_proto_depIdxs = []int32{
 	13, // 0: api.social.v1.SendFriendRequestResponse.request:type_name -> api.social.v1.FriendRequest
 	13, // 1: api.social.v1.ListRequestsResponse.requests:type_name -> api.social.v1.FriendRequest
 	13, // 2: api.social.v1.AcceptFriendRequestResponse.request:type_name -> api.social.v1.FriendRequest
 	13, // 3: api.social.v1.DeclineFriendRequestResponse.request:type_name -> api.social.v1.FriendRequest
-	0,  // 4: api.social.v1.FriendRequest.status:type_name -> api.social.v1.FriendRequestStatus
-	5,  // [5:5] is the sub-list for method output_type
-	5,  // [5:5] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	14, // 4: api.social.v1.ListFriendsRequest.last_accept_request_time:type_name -> google.protobuf.Timestamp
+	14, // 5: api.social.v1.ListFriendsResponse.last_accept_request_time:type_name -> google.protobuf.Timestamp
+	0,  // 6: api.social.v1.FriendRequest.status:type_name -> api.social.v1.FriendRequestStatus
+	7,  // [7:7] is the sub-list for method output_type
+	7,  // [7:7] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_api_social_v1_social_messages_proto_init() }
