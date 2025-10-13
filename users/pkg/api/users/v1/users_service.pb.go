@@ -26,10 +26,10 @@ var File_api_users_v1_users_service_proto protoreflect.FileDescriptor
 
 const file_api_users_v1_users_service_proto_rawDesc = "" +
 	"\n" +
-	" api/users/v1/users_service.proto\x12\fapi.users.v1\x1a!api/users/v1/users_messages.proto\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\x80\x05\n" +
+	" api/users/v1/users_service.proto\x12\fapi.users.v1\x1a!api/users/v1/users_messages.proto\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\x8d\x05\n" +
 	"\vUserService\x12n\n" +
-	"\rCreateProfile\x12\".api.users.v1.CreateProfileRequest\x1a#.api.users.v1.CreateProfileResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/v1/users\x12x\n" +
-	"\rUpdateProfile\x12\".api.users.v1.UpdateProfileRequest\x1a#.api.users.v1.UpdateProfileResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*2\x13/v1/users/{user_id}\x12s\n" +
+	"\rCreateProfile\x12\".api.users.v1.CreateProfileRequest\x1a#.api.users.v1.CreateProfileResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/v1/users\x12\x84\x01\n" +
+	"\rUpdateProfile\x12\".api.users.v1.UpdateProfileRequest\x1a#.api.users.v1.UpdateProfileResponse\"*\x82\xd3\xe4\x93\x02$:\rupdate_fields2\x13/v1/users/{user_id}\x12s\n" +
 	"\x0eGetProfileByID\x12#.api.users.v1.GetProfileByIDRequest\x1a$.api.users.v1.GetProfileByIDResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/v1/users/{id}\x12\x94\x01\n" +
 	"\x14GetProfileByNickname\x12).api.users.v1.GetProfileByNicknameRequest\x1a*.api.users.v1.GetProfileByNicknameResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/v1/users/nickname/{nickname}\x12{\n" +
 	"\x10SearchByNickname\x12%.api.users.v1.SearchByNicknameRequest\x1a&.api.users.v1.SearchByNicknameResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/users/searchB\xd5\x01\x92A>\x12\x14\n" +

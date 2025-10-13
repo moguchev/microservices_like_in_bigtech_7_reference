@@ -15,6 +15,7 @@ BUF_BIN := $(LOCAL_BIN)/buf
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
+	go install github.com/vektra/mockery/v2@latest
 
 # Список сервисов c proto файлами
 SERVICES := auth chat social users
@@ -45,9 +46,16 @@ MODULES := lib auth chat gateway social users
 		(cd $$module && go mod tidy); \
 	done
 
+.go-generate:
+	$(info Running go generate for all services...)
+	@for module in $(MODULES); do \
+  		echo "Running go generate for $$module..."; \
+		(cd $$module && PATH="$(LOCAL_BIN):$(PATH)" go generate ./...); \
+	done
+
 # Запустить генерацию кода из proto-файлов
-generate: .bin-deps .buf-format .buf-generate .tidy
-fast-generate: .buf-format .buf-generate .tidy
+generate: .bin-deps .buf-format .buf-generate .go-generate .tidy
+fast-generate: .buf-format .buf-generate .go-generate .tidy
 
 # Линтер protobuf файлов
 .buf-lint:
@@ -58,6 +66,19 @@ fast-generate: .buf-format .buf-generate .tidy
 # Линтер
 lint: .buf-lint
 
+# Запуск тестов во всех сервисах
+test:
+	$(info Running tests for all modules...)
+	@for module in $(MODULES); do \
+		test_packages=$$(find $$module -name '*_test.go' -type f -exec dirname {} \; | sort -u); \
+		if [ -n "$$test_packages" ]; then \
+			echo "Running tests for $$module..."; \
+			for pkg in $$test_packages; do \
+				(cd $$pkg && go test .); \
+			done; \
+		fi; \
+	done
+
 .PHONY: \
 	.bin-deps \
 	.buf-generate \
@@ -65,4 +86,5 @@ lint: .buf-lint
 	.buf-lint \
 	.tidy \
 	generate \
-	lint
+	lint \
+	test

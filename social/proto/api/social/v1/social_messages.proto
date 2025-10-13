@@ -4,6 +4,7 @@ package api.social.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "social/pkg/api/social/v1;social";
@@ -21,7 +22,7 @@ message SendFriendRequestRequest {
   // Id пользователя, которому отправляется заявка
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -58,7 +59,7 @@ message ListRequestsRequest {
   // Id пользователя, для которого получаем заявки
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -102,7 +103,7 @@ message AcceptFriendRequestRequest {
   // Id заявки
   string request_id = 1 [
     json_name = "request_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "request_id"
@@ -139,7 +140,7 @@ message DeclineFriendRequestRequest {
   // Id заявки
   string request_id = 1 [
     json_name = "request_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "request_id"
@@ -176,7 +177,7 @@ message RemoveFriendRequest {
   // Id друга, которого нужно удалить
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -210,7 +211,7 @@ message ListFriendsRequest {
   // Id пользователя
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -221,7 +222,7 @@ message ListFriendsRequest {
   ];
 
   // Лимит количества друзей
-  int32 limit = 2 [
+  uint32 limit = 2 [
     json_name = "limit",
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "limit"
@@ -231,8 +232,16 @@ message ListFriendsRequest {
     }
   ];
 
-  // Курсор для постраничной навигации
-  string cursor = 3 [json_name = "cursor"];
+  // Последнее время добавления в друзья в списке (курсор для постраничной навигации)
+  google.protobuf.Timestamp last_accept_request_time = 3 [
+    json_name = "last_accept_request_time",
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "last_accept_request_time"
+      description: "Последнее время добавления в друзья в списке (курсор для постраничной навигации)"
+      type: STRING
+    }
+  ];
 }
 
 // ListFriendsResponse - ответ списка друзей
@@ -255,8 +264,15 @@ message ListFriendsResponse {
     }
   ];
 
-  // Следующий курсор
-  string next_cursor = 2 [json_name = "next_cursor"];
+  // Последнее время добавления в друзья в списке (следующий курсор)
+  google.protobuf.Timestamp last_accept_request_time = 2 [
+    json_name = "last_accept_request_time",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "last_accept_request_time"
+      description: "Последнее время добавления в друзья в списке (курсор для постраничной навигации)"
+      type: STRING
+    }
+  ];
 }
 
 // FriendRequestStatus - статус заявки в друзья

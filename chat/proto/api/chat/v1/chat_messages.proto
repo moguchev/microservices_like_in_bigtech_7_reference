@@ -4,6 +4,7 @@ package api.chat.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "chat/pkg/api/chat/v1;chat";
@@ -21,7 +22,7 @@ message CreateDirectChatRequest {
   // Id собеседника
   string participant_id = 1 [
     json_name = "participant_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "participant_id"
@@ -66,7 +67,7 @@ message GetChatRequest {
   // Id чата
   string chat_id = 1 [
     json_name = "chat_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "chat_id"
@@ -110,7 +111,7 @@ message ListUserChatsRequest {
   // Id пользователя
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -154,7 +155,7 @@ message ListChatMembersRequest {
   // Id чата
   string chat_id = 1 [
     json_name = "chat_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "chat_id"
@@ -202,7 +203,7 @@ message SendMessageRequest {
   // Id чата
   string chat_id = 1 [
     json_name = "chat_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "chat_id"
@@ -259,7 +260,7 @@ message ListMessagesRequest {
   // Id чата
   string chat_id = 1 [
     json_name = "chat_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "chat_id"
@@ -270,7 +271,7 @@ message ListMessagesRequest {
   ];
 
   // Количество сообщений
-  int32 limit = 2 [
+  uint32 limit = 2 [
     json_name = "limit",
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "limit"
@@ -280,8 +281,16 @@ message ListMessagesRequest {
     }
   ];
 
-  // Курсор для пагинации
-  string cursor = 3 [json_name = "cursor"];
+  // Время отправления последнего сообщения в списке (курсор)
+  google.protobuf.Timestamp last_message_time = 3 [
+    json_name = "last_message_time",
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "last_message_time"
+      description: "Время отправления последнего сообщения в списке (курсор)"
+      type: STRING
+    }
+  ];
 }
 
 // ListMessagesResponse - ответ списка сообщений
@@ -303,8 +312,16 @@ message ListMessagesResponse {
     }
   ];
 
-  // Следующий курсор
-  string next_cursor = 2 [json_name = "next_cursor"];
+  // Следующее время отправления последнего сообщения в списке (курсор)
+  google.protobuf.Timestamp last_message_time = 3 [
+    json_name = "last_message_time",
+    (google.api.field_behavior) = OPTIONAL,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "last_message_time"
+      description: "Следующее время отправления последнего сообщения в списке (курсор)"
+      type: STRING
+    }
+  ];
 }
 
 // StreamMessagesRequest - запрос на поток сообщений
@@ -320,7 +337,7 @@ message StreamMessagesRequest {
   // Id чата
   string chat_id = 1 [
     json_name = "chat_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "chat_id"
@@ -330,14 +347,14 @@ message StreamMessagesRequest {
     }
   ];
 
-  // Временная метка (unix ms)
-  int64 since_unix_ms = 2 [
-    json_name = "since_unix_ms",
+  // Время отправления последнего сообщения
+  google.protobuf.Timestamp since_message_time = 3 [
+    json_name = "since_message_time",
+    (google.api.field_behavior) = OPTIONAL,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title: "since_unix_ms"
-      description: "Временная метка в миллисекундах (unix)"
-      example: "1694000000000"
-      type: INTEGER
+      title: "since_message_time"
+      description: "Время отправления последнего сообщения"
+      type: STRING
     }
   ];
 }
@@ -447,14 +464,13 @@ message Message {
     }
   ];
 
-  // Время создания сообщения (unix ms)
-  int64 created_at_unix_ms = 5 [
-    json_name = "created_at_unix_ms",
+  // Время создания сообщения
+  google.protobuf.Timestamp created_at = 5 [
+    json_name = "created_at",
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title: "created_at_unix_ms"
-      description: "Метка времени создания сообщения (unix ms)"
-      example: "1694000000000"
-      type: INTEGER
+      title: "created_at"
+      description: "Метка времени создания сообщения"
+      type: STRING
     }
   ];
 }

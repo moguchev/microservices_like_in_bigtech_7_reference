@@ -119,8 +119,8 @@ ListFriendsRequest - запрос списка друзей
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [string](#string) |  | Id пользователя |
-| limit | [int32](#int32) |  | Лимит количества друзей |
-| cursor | [string](#string) |  | Курсор для постраничной навигации |
+| limit | [uint32](#uint32) |  | Лимит количества друзей |
+| last_accept_request_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Последнее время добавления в друзья в списке (курсор для постраничной навигации) |
 
 
 
@@ -136,7 +136,7 @@ ListFriendsResponse - ответ списка друзей
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | friend_user_ids | [string](#string) | repeated | Id друзей |
-| next_cursor | [string](#string) |  | Следующий курсор |
+| last_accept_request_time | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Последнее время добавления в друзья в списке (следующий курсор) |
 
 
 

@@ -32,7 +32,7 @@ service UserService {
   rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse) {
     option (google.api.http) = {
       patch: "/v1/users/{user_id}"
-      body: "*"
+      body: "update_fields"
     };
   }
 

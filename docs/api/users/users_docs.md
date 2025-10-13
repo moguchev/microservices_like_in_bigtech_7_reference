@@ -13,6 +13,7 @@
     - [SearchByNicknameRequest](#api-users-v1-SearchByNicknameRequest)
     - [SearchByNicknameResponse](#api-users-v1-SearchByNicknameResponse)
     - [UpdateProfileRequest](#api-users-v1-UpdateProfileRequest)
+    - [UpdateProfileRequest.UpdateProfileFields](#api-users-v1-UpdateProfileRequest-UpdateProfileFields)
     - [UpdateProfileResponse](#api-users-v1-UpdateProfileResponse)
     - [UserProfile](#api-users-v1-UserProfile)
   
@@ -40,8 +41,8 @@ CreateProfileRequest - запрос на создание профиля
 | ----- | ---- | ----- | ----------- |
 | user_id | [string](#string) |  | Id пользователя |
 | nickname | [string](#string) |  | Никнейм |
-| bio | [string](#string) |  | Биография |
-| avatar_url | [string](#string) |  | URL аватара |
+| bio | [string](#string) | optional | Биография |
+| avatar_url | [string](#string) | optional | URL аватара |
 
 
 
@@ -132,7 +133,7 @@ SearchByNicknameRequest - запрос поиска пользователей �
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | query | [string](#string) |  | Поисковый запрос |
-| limit | [int32](#int32) |  | Лимит количества результатов |
+| limit | [uint32](#uint32) |  | Лимит количества результатов |
 
 
 
@@ -163,9 +164,27 @@ UpdateProfileRequest - запрос на обновление профиля
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [string](#string) |  | Id пользователя |
-| nickname | [string](#string) |  | Никнейм |
-| bio | [string](#string) |  | Биография |
-| avatar_url | [string](#string) |  | URL аватара |
+| update_fields | [UpdateProfileRequest.UpdateProfileFields](#api-users-v1-UpdateProfileRequest-UpdateProfileFields) |  | Обновляемые поля |
+| update_mask | [google.protobuf.FieldMask](#google-protobuf-FieldMask) |  | FieldMask
+
+См. https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/#patch-feature |
+
+
+
+
+
+
+<a name="api-users-v1-UpdateProfileRequest-UpdateProfileFields"></a>
+
+### UpdateProfileRequest.UpdateProfileFields
+Обновляемые поля профиля
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| nickname | [string](#string) | optional | Никнейм |
+| bio | [string](#string) | optional | Биография |
+| avatar_url | [string](#string) | optional | URL аватара |
 
 
 

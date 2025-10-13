@@ -4,6 +4,7 @@ package api.users.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/field_mask.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "users/pkg/api/users/v1;user";
@@ -24,7 +25,7 @@ message CreateProfileRequest {
   // Id пользователя
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -48,7 +49,7 @@ message CreateProfileRequest {
   ];
 
   // Биография
-  string bio = 3 [
+  optional string bio = 3 [
     json_name = "bio",
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "bio"
@@ -59,8 +60,9 @@ message CreateProfileRequest {
   ];
 
   // URL аватара
-  string avatar_url = 4 [
+  optional string avatar_url = 4 [
     json_name = "avatar_url",
+    (buf.validate.field).string.uri = true,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "avatar_url"
       description: "URL аватара пользователя"
@@ -96,7 +98,7 @@ message UpdateProfileRequest {
   // Id пользователя
   string user_id = 1 [
     json_name = "user_id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "user_id"
@@ -106,39 +108,50 @@ message UpdateProfileRequest {
     }
   ];
 
-  // Никнейм
-  string nickname = 2 [
-    json_name = "nickname",
-    (buf.validate.field).string.pattern = "^[a-z0-9_]{3,20}$",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title: "nickname"
-      description: "Никнейм пользователя"
-      example: "\"john_doe\""
-      type: STRING
-    }
-  ];
+  // Обновляемые поля профиля
+  message UpdateProfileFields {
+    // Никнейм
+    optional string nickname = 1 [
+      json_name = "nickname",
+      (buf.validate.field).string.pattern = "^[a-z0-9_]{3,20}$",
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title: "nickname"
+        description: "Никнейм пользователя"
+        example: "\"john_doe\""
+        type: STRING
+      }
+    ];
 
-  // Биография
-  string bio = 3 [
-    json_name = "bio",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title: "bio"
-      description: "Биография пользователя"
-      example: "\"Люблю программировать\""
-      type: STRING
-    }
-  ];
+    // Биография
+    optional string bio = 2 [
+      json_name = "bio",
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title: "bio"
+        description: "Биография пользователя"
+        example: "\"Люблю программировать\""
+        type: STRING
+      }
+    ];
 
-  // URL аватара
-  string avatar_url = 4 [
-    json_name = "avatar_url",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      title: "avatar_url"
-      description: "URL аватара пользователя"
-      example: "\"https://example.com/avatar.png\""
-      type: STRING
-    }
-  ];
+    // URL аватара
+    optional string avatar_url = 3 [
+      json_name = "avatar_url",
+      (buf.validate.field).string.uri = true,
+      (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+        title: "avatar_url"
+        description: "URL аватара пользователя"
+        example: "\"https://example.com/avatar.png\""
+        type: STRING
+      }
+    ];
+  }
+
+  // Обновляемые поля
+  UpdateProfileFields update_fields = 2;
+  // FieldMask
+  //
+  // См. https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/#patch-feature
+  google.protobuf.FieldMask update_mask = 3;
 }
 
 // UpdateProfileResponse - ответ на обновление профиля
@@ -167,7 +180,7 @@ message GetProfileByIDRequest {
   // Id пользователя
   string id = 1 [
     json_name = "id",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.uuid = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "id"
@@ -204,7 +217,7 @@ message GetProfileByNicknameRequest {
   // Никнейм
   string nickname = 1 [
     json_name = "nickname",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.pattern = "^[a-z0-9_]{3,20}$",
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "nickname"
@@ -252,7 +265,7 @@ message SearchByNicknameRequest {
   ];
 
   // Лимит количества результатов
-  int32 limit = 2 [
+  uint32 limit = 2 [
     json_name = "limit",
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "limit"

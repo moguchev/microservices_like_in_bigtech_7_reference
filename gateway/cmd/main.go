@@ -30,19 +30,19 @@ func main() {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	if err := authpb.RegisterAuthServiceHandlerFromEndpoint(ctx, gWmux, "auth:8081", grpcOpts); err != nil {
+	if err := authpb.RegisterAuthServiceHandlerFromEndpoint(ctx, gWmux, "auth:8080", grpcOpts); err != nil {
 		log.Fatalf("failed to register auth service: %v", err)
 	}
 
-	if err := chatpb.RegisterChatServiceHandlerFromEndpoint(ctx, gWmux, "chat:8082", grpcOpts); err != nil {
+	if err := chatpb.RegisterChatServiceHandlerFromEndpoint(ctx, gWmux, "chat:8080", grpcOpts); err != nil {
 		log.Fatalf("failed to register chat service: %v", err)
 	}
 
-	if err := socialpb.RegisterSocialServiceHandlerFromEndpoint(ctx, gWmux, "social:8083", grpcOpts); err != nil {
+	if err := socialpb.RegisterSocialServiceHandlerFromEndpoint(ctx, gWmux, "social:8080", grpcOpts); err != nil {
 		log.Fatalf("failed to register social service: %v", err)
 	}
 
-	if err := userspb.RegisterUserServiceHandlerFromEndpoint(ctx, gWmux, "users:8084", grpcOpts); err != nil {
+	if err := userspb.RegisterUserServiceHandlerFromEndpoint(ctx, gWmux, "users:8080", grpcOpts); err != nil {
 		log.Fatalf("failed to register users service: %v", err)
 	}
 

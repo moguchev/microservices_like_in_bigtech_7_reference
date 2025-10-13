@@ -12,6 +12,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -32,9 +33,9 @@ type CreateProfileRequest struct {
 	// Никнейм
 	Nickname string `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	// Биография
-	Bio string `protobuf:"bytes,3,opt,name=bio,proto3" json:"bio,omitempty"`
+	Bio *string `protobuf:"bytes,3,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
 	// URL аватара
-	AvatarUrl     string `protobuf:"bytes,4,opt,name=avatar_url,proto3" json:"avatar_url,omitempty"`
+	AvatarUrl     *string `protobuf:"bytes,4,opt,name=avatar_url,proto3,oneof" json:"avatar_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -84,15 +85,15 @@ func (x *CreateProfileRequest) GetNickname() string {
 }
 
 func (x *CreateProfileRequest) GetBio() string {
-	if x != nil {
-		return x.Bio
+	if x != nil && x.Bio != nil {
+		return *x.Bio
 	}
 	return ""
 }
 
 func (x *CreateProfileRequest) GetAvatarUrl() string {
-	if x != nil {
-		return x.AvatarUrl
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
 	}
 	return ""
 }
@@ -148,12 +149,12 @@ type UpdateProfileRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Id пользователя
 	UserId string `protobuf:"bytes,1,opt,name=user_id,proto3" json:"user_id,omitempty"`
-	// Никнейм
-	Nickname string `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	// Биография
-	Bio string `protobuf:"bytes,3,opt,name=bio,proto3" json:"bio,omitempty"`
-	// URL аватара
-	AvatarUrl     string `protobuf:"bytes,4,opt,name=avatar_url,proto3" json:"avatar_url,omitempty"`
+	// Обновляемые поля
+	UpdateFields *UpdateProfileRequest_UpdateProfileFields `protobuf:"bytes,2,opt,name=update_fields,json=updateFields,proto3" json:"update_fields,omitempty"`
+	// FieldMask
+	//
+	// См. https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/#patch-feature
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -195,25 +196,18 @@ func (x *UpdateProfileRequest) GetUserId() string {
 	return ""
 }
 
-func (x *UpdateProfileRequest) GetNickname() string {
+func (x *UpdateProfileRequest) GetUpdateFields() *UpdateProfileRequest_UpdateProfileFields {
 	if x != nil {
-		return x.Nickname
+		return x.UpdateFields
 	}
-	return ""
+	return nil
 }
 
-func (x *UpdateProfileRequest) GetBio() string {
+func (x *UpdateProfileRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	if x != nil {
-		return x.Bio
+		return x.UpdateMask
 	}
-	return ""
-}
-
-func (x *UpdateProfileRequest) GetAvatarUrl() string {
-	if x != nil {
-		return x.AvatarUrl
-	}
-	return ""
+	return nil
 }
 
 // UpdateProfileResponse - ответ на обновление профиля
@@ -452,7 +446,7 @@ type SearchByNicknameRequest struct {
 	// Поисковый запрос
 	Query string `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
 	// Лимит количества результатов
-	Limit         int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Limit         uint32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -494,7 +488,7 @@ func (x *SearchByNicknameRequest) GetQuery() string {
 	return ""
 }
 
-func (x *SearchByNicknameRequest) GetLimit() int32 {
+func (x *SearchByNicknameRequest) GetLimit() uint32 {
 	if x != nil {
 		return x.Limit
 	}
@@ -620,53 +614,126 @@ func (x *UserProfile) GetAvatarUrl() string {
 	return ""
 }
 
+// Обновляемые поля профиля
+type UpdateProfileRequest_UpdateProfileFields struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Никнейм
+	Nickname *string `protobuf:"bytes,1,opt,name=nickname,proto3,oneof" json:"nickname,omitempty"`
+	// Биография
+	Bio *string `protobuf:"bytes,2,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
+	// URL аватара
+	AvatarUrl     *string `protobuf:"bytes,3,opt,name=avatar_url,proto3,oneof" json:"avatar_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProfileRequest_UpdateProfileFields) Reset() {
+	*x = UpdateProfileRequest_UpdateProfileFields{}
+	mi := &file_api_users_v1_users_messages_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProfileRequest_UpdateProfileFields) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProfileRequest_UpdateProfileFields) ProtoMessage() {}
+
+func (x *UpdateProfileRequest_UpdateProfileFields) ProtoReflect() protoreflect.Message {
+	mi := &file_api_users_v1_users_messages_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProfileRequest_UpdateProfileFields.ProtoReflect.Descriptor instead.
+func (*UpdateProfileRequest_UpdateProfileFields) Descriptor() ([]byte, []int) {
+	return file_api_users_v1_users_messages_proto_rawDescGZIP(), []int{2, 0}
+}
+
+func (x *UpdateProfileRequest_UpdateProfileFields) GetNickname() string {
+	if x != nil && x.Nickname != nil {
+		return *x.Nickname
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest_UpdateProfileFields) GetBio() string {
+	if x != nil && x.Bio != nil {
+		return *x.Bio
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest_UpdateProfileFields) GetAvatarUrl() string {
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
+	}
+	return ""
+}
+
 var File_api_users_v1_users_messages_proto protoreflect.FileDescriptor
 
 const file_api_users_v1_users_messages_proto_rawDesc = "" +
 	"\n" +
-	"!api/users/v1/users_messages.proto\x12\fapi.users.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\x8d\x05\n" +
-	"\x14CreateProfileRequest\x12y\n" +
-	"\auser_id\x18\x01 \x01(\tB_\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id\x12}\n" +
+	"!api/users/v1/users_messages.proto\x12\fapi.users.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a google/protobuf/field_mask.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\xb7\x05\n" +
+	"\x14CreateProfileRequest\x12z\n" +
+	"\auser_id\x18\x01 \x01(\tB`\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id\x12}\n" +
 	"\bnickname\x18\x02 \x01(\tBa\x92AC*\bnickname2'Никнейм пользователяJ\n" +
-	"\"john_doe\"\x9a\x02\x01\a\xe0A\x02\xbaH\x15r\x132\x11^[a-z0-9_]{3,20}$R\bnickname\x12x\n" +
-	"\x03bio\x18\x03 \x01(\tBf\x92Ac*\x03bio2+Биография пользователяJ+\"Люблю программировать\"\x9a\x02\x01\aR\x03bio\x12\x82\x01\n" +
+	"\"john_doe\"\x9a\x02\x01\a\xe0A\x02\xbaH\x15r\x132\x11^[a-z0-9_]{3,20}$R\bnickname\x12}\n" +
+	"\x03bio\x18\x03 \x01(\tBf\x92Ac*\x03bio2+Биография пользователяJ+\"Люблю программировать\"\x9a\x02\x01\aH\x00R\x03bio\x88\x01\x01\x12\x8f\x01\n" +
 	"\n" +
-	"avatar_url\x18\x04 \x01(\tBb\x92A_*\n" +
-	"avatar_url2+URL аватара пользователяJ \"https://example.com/avatar.png\"\x9a\x02\x01\aR\n" +
-	"avatar_url:|\x92Ay\n" +
-	"w*\x14CreateProfileRequest2JЗапрос на создание профиля пользователя\xd2\x01\auser_id\xd2\x01\bnickname\"\xb4\x01\n" +
+	"avatar_url\x18\x04 \x01(\tBj\x92A_*\n" +
+	"avatar_url2+URL аватара пользователяJ \"https://example.com/avatar.png\"\x9a\x02\x01\a\xbaH\x05r\x03\x88\x01\x01H\x01R\n" +
+	"avatar_url\x88\x01\x01:|\x92Ay\n" +
+	"w*\x14CreateProfileRequest2JЗапрос на создание профиля пользователя\xd2\x01\auser_id\xd2\x01\bnicknameB\x06\n" +
+	"\x04_bioB\r\n" +
+	"\v_avatar_url\"\xb4\x01\n" +
 	"\x15CreateProfileResponse\x123\n" +
 	"\aprofile\x18\x01 \x01(\v2\x19.api.users.v1.UserProfileR\aprofile:f\x92Ac\n" +
-	"a*\x15CreateProfileResponse2HОтвет на создание профиля пользователя\"\x83\x05\n" +
-	"\x14UpdateProfileRequest\x12y\n" +
-	"\auser_id\x18\x01 \x01(\tB_\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id\x12z\n" +
-	"\bnickname\x18\x02 \x01(\tB^\x92AC*\bnickname2'Никнейм пользователяJ\n" +
-	"\"john_doe\"\x9a\x02\x01\a\xbaH\x15r\x132\x11^[a-z0-9_]{3,20}$R\bnickname\x12x\n" +
-	"\x03bio\x18\x03 \x01(\tBf\x92Ac*\x03bio2+Биография пользователяJ+\"Люблю программировать\"\x9a\x02\x01\aR\x03bio\x12\x82\x01\n" +
+	"a*\x15CreateProfileResponse2HОтвет на создание профиля пользователя\"\xf1\x06\n" +
+	"\x14UpdateProfileRequest\x12z\n" +
+	"\auser_id\x18\x01 \x01(\tB`\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id\x12[\n" +
+	"\rupdate_fields\x18\x02 \x01(\v26.api.users.v1.UpdateProfileRequest.UpdateProfileFieldsR\fupdateFields\x12;\n" +
+	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\x1a\xcb\x03\n" +
+	"\x13UpdateProfileFields\x12\x7f\n" +
+	"\bnickname\x18\x01 \x01(\tB^\x92AC*\bnickname2'Никнейм пользователяJ\n" +
+	"\"john_doe\"\x9a\x02\x01\a\xbaH\x15r\x132\x11^[a-z0-9_]{3,20}$H\x00R\bnickname\x88\x01\x01\x12}\n" +
+	"\x03bio\x18\x02 \x01(\tBf\x92Ac*\x03bio2+Биография пользователяJ+\"Люблю программировать\"\x9a\x02\x01\aH\x01R\x03bio\x88\x01\x01\x12\x8f\x01\n" +
 	"\n" +
-	"avatar_url\x18\x04 \x01(\tBb\x92A_*\n" +
-	"avatar_url2+URL аватара пользователяJ \"https://example.com/avatar.png\"\x9a\x02\x01\aR\n" +
-	"avatar_url:u\x92Ar\n" +
+	"avatar_url\x18\x03 \x01(\tBj\x92A_*\n" +
+	"avatar_url2+URL аватара пользователяJ \"https://example.com/avatar.png\"\x9a\x02\x01\a\xbaH\x05r\x03\x88\x01\x01H\x02R\n" +
+	"avatar_url\x88\x01\x01B\v\n" +
+	"\t_nicknameB\x06\n" +
+	"\x04_bioB\r\n" +
+	"\v_avatar_url:u\x92Ar\n" +
 	"p*\x14UpdateProfileRequest2NЗапрос на обновление профиля пользователя\xd2\x01\auser_id\"\xb8\x01\n" +
 	"\x15UpdateProfileResponse\x123\n" +
 	"\aprofile\x18\x01 \x01(\v2\x19.api.users.v1.UserProfileR\aprofile:j\x92Ag\n" +
-	"e*\x15UpdateProfileResponse2LОтвет на обновление профиля пользователя\"\xfc\x01\n" +
-	"\x15GetProfileByIDRequest\x12j\n" +
-	"\x02id\x18\x01 \x01(\tBZ\x92AM*\x02id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id:w\x92At\n" +
+	"e*\x15UpdateProfileResponse2LОтвет на обновление профиля пользователя\"\xfd\x01\n" +
+	"\x15GetProfileByIDRequest\x12k\n" +
+	"\x02id\x18\x01 \x01(\tB[\x92AM*\x02id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\x02id:w\x92At\n" +
 	"r*\x15GetProfileByIDRequest2TЗапрос на получение профиля пользователя по ID\xd2\x01\x02id\"\xc0\x01\n" +
 	"\x16GetProfileByIDResponse\x123\n" +
 	"\aprofile\x18\x01 \x01(\v2\x19.api.users.v1.UserProfileR\aprofile:q\x92An\n" +
-	"l*\x16GetProfileByIDResponse2RОтвет на получение профиля пользователя по ID\"\xa1\x02\n" +
-	"\x1bGetProfileByNicknameRequest\x12l\n" +
-	"\bnickname\x18\x01 \x01(\tBP\x92AC*\bnickname2'Никнейм пользователяJ\n" +
-	"\"john_doe\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\bnickname:\x93\x01\x92A\x8f\x01\n" +
+	"l*\x16GetProfileByIDResponse2RОтвет на получение профиля пользователя по ID\"\xb2\x02\n" +
+	"\x1bGetProfileByNicknameRequest\x12}\n" +
+	"\bnickname\x18\x01 \x01(\tBa\x92AC*\bnickname2'Никнейм пользователяJ\n" +
+	"\"john_doe\"\x9a\x02\x01\a\xe0A\x02\xbaH\x15r\x132\x11^[a-z0-9_]{3,20}$R\bnickname:\x93\x01\x92A\x8f\x01\n" +
 	"\x8c\x01*\x1bGetProfileByNicknameRequest2bЗапрос на получение профиля пользователя по никнейму\xd2\x01\bnickname\"\xdd\x01\n" +
 	"\x1cGetProfileByNicknameResponse\x123\n" +
 	"\aprofile\x18\x01 \x01(\v2\x19.api.users.v1.UserProfileR\aprofile:\x87\x01\x92A\x83\x01\n" +
 	"\x80\x01*\x1cGetProfileByNicknameResponse2`Ответ на получение профиля пользователя по никнейму\"\xe3\x02\n" +
 	"\x17SearchByNicknameRequest\x12o\n" +
 	"\x05query\x18\x01 \x01(\tBY\x92AL*\x05query27Поисковый запрос для никнеймаJ\x06\"john\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\x05query\x12`\n" +
-	"\x05limit\x18\x02 \x01(\x05BJ\x92AG*\x05limit26Лимит количества результатовJ\x0220\x9a\x02\x01\x03R\x05limit:u\x92Ar\n" +
+	"\x05limit\x18\x02 \x01(\rBJ\x92AG*\x05limit26Лимит количества результатовJ\x0220\x9a\x02\x01\x03R\x05limit:u\x92Ar\n" +
 	"p*\x17SearchByNicknameRequest2MЗапрос на поиск пользователей по никнейму\xd2\x01\x05query\"\xbd\x01\n" +
 	"\x18SearchByNicknameResponse\x123\n" +
 	"\aresults\x18\x01 \x03(\v2\x19.api.users.v1.UserProfileR\aresults:l\x92Ai\n" +
@@ -695,31 +762,35 @@ func file_api_users_v1_users_messages_proto_rawDescGZIP() []byte {
 	return file_api_users_v1_users_messages_proto_rawDescData
 }
 
-var file_api_users_v1_users_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_api_users_v1_users_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_api_users_v1_users_messages_proto_goTypes = []any{
-	(*CreateProfileRequest)(nil),         // 0: api.users.v1.CreateProfileRequest
-	(*CreateProfileResponse)(nil),        // 1: api.users.v1.CreateProfileResponse
-	(*UpdateProfileRequest)(nil),         // 2: api.users.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),        // 3: api.users.v1.UpdateProfileResponse
-	(*GetProfileByIDRequest)(nil),        // 4: api.users.v1.GetProfileByIDRequest
-	(*GetProfileByIDResponse)(nil),       // 5: api.users.v1.GetProfileByIDResponse
-	(*GetProfileByNicknameRequest)(nil),  // 6: api.users.v1.GetProfileByNicknameRequest
-	(*GetProfileByNicknameResponse)(nil), // 7: api.users.v1.GetProfileByNicknameResponse
-	(*SearchByNicknameRequest)(nil),      // 8: api.users.v1.SearchByNicknameRequest
-	(*SearchByNicknameResponse)(nil),     // 9: api.users.v1.SearchByNicknameResponse
-	(*UserProfile)(nil),                  // 10: api.users.v1.UserProfile
+	(*CreateProfileRequest)(nil),                     // 0: api.users.v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil),                    // 1: api.users.v1.CreateProfileResponse
+	(*UpdateProfileRequest)(nil),                     // 2: api.users.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),                    // 3: api.users.v1.UpdateProfileResponse
+	(*GetProfileByIDRequest)(nil),                    // 4: api.users.v1.GetProfileByIDRequest
+	(*GetProfileByIDResponse)(nil),                   // 5: api.users.v1.GetProfileByIDResponse
+	(*GetProfileByNicknameRequest)(nil),              // 6: api.users.v1.GetProfileByNicknameRequest
+	(*GetProfileByNicknameResponse)(nil),             // 7: api.users.v1.GetProfileByNicknameResponse
+	(*SearchByNicknameRequest)(nil),                  // 8: api.users.v1.SearchByNicknameRequest
+	(*SearchByNicknameResponse)(nil),                 // 9: api.users.v1.SearchByNicknameResponse
+	(*UserProfile)(nil),                              // 10: api.users.v1.UserProfile
+	(*UpdateProfileRequest_UpdateProfileFields)(nil), // 11: api.users.v1.UpdateProfileRequest.UpdateProfileFields
+	(*fieldmaskpb.FieldMask)(nil),                    // 12: google.protobuf.FieldMask
 }
 var file_api_users_v1_users_messages_proto_depIdxs = []int32{
 	10, // 0: api.users.v1.CreateProfileResponse.profile:type_name -> api.users.v1.UserProfile
-	10, // 1: api.users.v1.UpdateProfileResponse.profile:type_name -> api.users.v1.UserProfile
-	10, // 2: api.users.v1.GetProfileByIDResponse.profile:type_name -> api.users.v1.UserProfile
-	10, // 3: api.users.v1.GetProfileByNicknameResponse.profile:type_name -> api.users.v1.UserProfile
-	10, // 4: api.users.v1.SearchByNicknameResponse.results:type_name -> api.users.v1.UserProfile
-	5,  // [5:5] is the sub-list for method output_type
-	5,  // [5:5] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	11, // 1: api.users.v1.UpdateProfileRequest.update_fields:type_name -> api.users.v1.UpdateProfileRequest.UpdateProfileFields
+	12, // 2: api.users.v1.UpdateProfileRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 3: api.users.v1.UpdateProfileResponse.profile:type_name -> api.users.v1.UserProfile
+	10, // 4: api.users.v1.GetProfileByIDResponse.profile:type_name -> api.users.v1.UserProfile
+	10, // 5: api.users.v1.GetProfileByNicknameResponse.profile:type_name -> api.users.v1.UserProfile
+	10, // 6: api.users.v1.SearchByNicknameResponse.results:type_name -> api.users.v1.UserProfile
+	7,  // [7:7] is the sub-list for method output_type
+	7,  // [7:7] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_api_users_v1_users_messages_proto_init() }
@@ -727,13 +798,15 @@ func file_api_users_v1_users_messages_proto_init() {
 	if File_api_users_v1_users_messages_proto != nil {
 		return
 	}
+	file_api_users_v1_users_messages_proto_msgTypes[0].OneofWrappers = []any{}
+	file_api_users_v1_users_messages_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_users_v1_users_messages_proto_rawDesc), len(file_api_users_v1_users_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

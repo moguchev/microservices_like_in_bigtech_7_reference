@@ -1,48 +1,76 @@
 package main
 
 import (
+	"context"
 	"log"
-	"net"
 
-	"lib/grpc_utils"
-	grpc_middleware "lib/middleware/grpc"
-	"users/internal"
-	pb "users/pkg/api/users/v1"
+	auth_context "lib/auth/context"
+	lib_grpc_middleware "lib/middleware/grpc"
+	users_controller "users/internal/app/controllers/users"
+	profiles_repository "users/internal/app/repositories/profiles"
+	"users/internal/app/server"
+	"users/internal/app/usecases/users"
+	grpc_middleware "users/internal/middleware/grpc"
 
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 const address = ":8080"
 
 func main() {
-	server, err := internal.NewServer()
-	if err != nil {
-		log.Fatalf("failed to create server: %v", err)
-	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
+	// =========================
+	// adapters
+	// =========================
+
+	// repository
+	profilesRepo := profiles_repository.NewRepository()
+
+	// =========================
+	// usecases
+	// =========================
+
+	usersUsecase := users.NewUsecase(users.Deps{
+		ProfilesRepository: profilesRepo,
+		UserIDProvider:     auth_context.MyUserIDProvider{},
+	})
+
+	// =========================
+	// delivery
+	// =========================
+
+	// controllers
+	usersController := users_controller.New(users_controller.Deps{
+		UsersUsecase: usersUsecase,
+	})
+
+	// middlewares
 	validator, err := protovalidate.New(protovalidate.WithDisableLazy(false))
 	if err != nil {
 		log.Fatalf("server: failed to initialize validator: %s", err)
 	}
-
-	grpcServerOptions := grpc_utils.UnaryInterceptorsToGrpcServerOptions(
-		grpc_middleware.ValidateUnaryServerInterceptor(validator),
-	)
-
-	grpcServer := grpc.NewServer(grpcServerOptions...)
-	pb.RegisterUserServiceServer(grpcServer, server)
-
-	reflection.Register(grpcServer)
-
-	lis, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	mws := []grpc.UnaryServerInterceptor{
+		grpc_middleware.ErrorsUnaryServerInterceptor(),
+		lib_grpc_middleware.ValidateUnaryServerInterceptor(validator),
 	}
 
-	log.Printf("server listening at %v", lis.Addr())
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	// infrastructure server
+	config := server.Config{
+		GRPCPort:               address,
+		ChainUnaryInterceptors: mws,
+	}
+
+	srv, err := server.New(ctx, config, server.Contollers{
+		UserServiceServer: usersController,
+	})
+	if err != nil {
+		log.Fatalf("failed to create server: %v", err)
+	}
+
+	if err = srv.Run(ctx); err != nil {
+		log.Fatalf("run: %v", err)
 	}
 }

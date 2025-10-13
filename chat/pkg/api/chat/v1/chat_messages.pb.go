@@ -12,6 +12,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -499,11 +500,11 @@ type ListMessagesRequest struct {
 	// Id чата
 	ChatId string `protobuf:"bytes,1,opt,name=chat_id,proto3" json:"chat_id,omitempty"`
 	// Количество сообщений
-	Limit int32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	// Курсор для пагинации
-	Cursor        string `protobuf:"bytes,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Limit uint32 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Время отправления последнего сообщения в списке (курсор)
+	LastMessageTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_message_time,proto3" json:"last_message_time,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListMessagesRequest) Reset() {
@@ -543,18 +544,18 @@ func (x *ListMessagesRequest) GetChatId() string {
 	return ""
 }
 
-func (x *ListMessagesRequest) GetLimit() int32 {
+func (x *ListMessagesRequest) GetLimit() uint32 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *ListMessagesRequest) GetCursor() string {
+func (x *ListMessagesRequest) GetLastMessageTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Cursor
+		return x.LastMessageTime
 	}
-	return ""
+	return nil
 }
 
 // ListMessagesResponse - ответ списка сообщений
@@ -562,10 +563,10 @@ type ListMessagesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Список сообщений
 	Messages []*Message `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages,omitempty"`
-	// Следующий курсор
-	NextCursor    string `protobuf:"bytes,2,opt,name=next_cursor,proto3" json:"next_cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Следующее время отправления последнего сообщения в списке (курсор)
+	LastMessageTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_message_time,proto3" json:"last_message_time,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListMessagesResponse) Reset() {
@@ -605,11 +606,11 @@ func (x *ListMessagesResponse) GetMessages() []*Message {
 	return nil
 }
 
-func (x *ListMessagesResponse) GetNextCursor() string {
+func (x *ListMessagesResponse) GetLastMessageTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.NextCursor
+		return x.LastMessageTime
 	}
-	return ""
+	return nil
 }
 
 // StreamMessagesRequest - запрос на поток сообщений
@@ -617,10 +618,10 @@ type StreamMessagesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Id чата
 	ChatId string `protobuf:"bytes,1,opt,name=chat_id,proto3" json:"chat_id,omitempty"`
-	// Временная метка (unix ms)
-	SinceUnixMs   int64 `protobuf:"varint,2,opt,name=since_unix_ms,proto3" json:"since_unix_ms,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Время отправления последнего сообщения
+	SinceMessageTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=since_message_time,proto3" json:"since_message_time,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *StreamMessagesRequest) Reset() {
@@ -660,11 +661,11 @@ func (x *StreamMessagesRequest) GetChatId() string {
 	return ""
 }
 
-func (x *StreamMessagesRequest) GetSinceUnixMs() int64 {
+func (x *StreamMessagesRequest) GetSinceMessageTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.SinceUnixMs
+		return x.SinceMessageTime
 	}
-	return 0
+	return nil
 }
 
 // StreamMessagesResponse - ответ потока сообщений
@@ -779,10 +780,10 @@ type Message struct {
 	SenderId string `protobuf:"bytes,3,opt,name=sender_id,proto3" json:"sender_id,omitempty"`
 	// Текст сообщения
 	Text string `protobuf:"bytes,4,opt,name=text,proto3" json:"text,omitempty"`
-	// Время создания сообщения (unix ms)
-	CreatedAtUnixMs int64 `protobuf:"varint,5,opt,name=created_at_unix_ms,proto3" json:"created_at_unix_ms,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Время создания сообщения
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Message) Reset() {
@@ -843,61 +844,61 @@ func (x *Message) GetText() string {
 	return ""
 }
 
-func (x *Message) GetCreatedAtUnixMs() int64 {
+func (x *Message) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.CreatedAtUnixMs
+		return x.CreatedAt
 	}
-	return 0
+	return nil
 }
 
 var File_api_chat_v1_chat_messages_proto protoreflect.FileDescriptor
 
 const file_api_chat_v1_chat_messages_proto_rawDesc = "" +
 	"\n" +
-	"\x1fapi/chat/v1/chat_messages.proto\x12\vapi.chat.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\x95\x02\n" +
-	"\x17CreateDirectChatRequest\x12\x8c\x01\n" +
-	"\x0eparticipant_id\x18\x01 \x01(\tBd\x92AW*\x0eparticipant_id2\x19Id собеседникаJ&\"123e4567-e89b-12d3-a456-426614174001\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\x0eparticipant_id:k\x92Ah\n" +
+	"\x1fapi/chat/v1/chat_messages.proto\x12\vapi.chat.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\x96\x02\n" +
+	"\x17CreateDirectChatRequest\x12\x8d\x01\n" +
+	"\x0eparticipant_id\x18\x01 \x01(\tBe\x92AW*\x0eparticipant_id2\x19Id собеседникаJ&\"123e4567-e89b-12d3-a456-426614174001\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\x0eparticipant_id:k\x92Ah\n" +
 	"f*\x17CreateDirectChatRequest2:Запрос на создание личного чата\xd2\x01\x0eparticipant_id\"\xdc\x01\n" +
 	"\x18CreateDirectChatResponse\x12t\n" +
 	"\achat_id\x18\x01 \x01(\tBZ\x92AW*\achat_id2 Id созданного чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\aR\achat_id:J\x92AG\n" +
-	"E*\x18CreateDirectChatResponse2)Ответ на создание чата\"\xcb\x01\n" +
-	"\x0eGetChatRequest\x12i\n" +
-	"\achat_id\x18\x01 \x01(\tBO\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\achat_id:N\x92AK\n" +
+	"E*\x18CreateDirectChatResponse2)Ответ на создание чата\"\xcc\x01\n" +
+	"\x0eGetChatRequest\x12j\n" +
+	"\achat_id\x18\x01 \x01(\tBP\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\achat_id:N\x92AK\n" +
 	"I*\x0eGetChatRequest2-Запрос на получение чата\xd2\x01\achat_id\"\x9e\x01\n" +
 	"\x0fGetChatResponse\x12K\n" +
 	"\x04chat\x18\x01 \x01(\v2\x11.api.chat.v1.ChatB$\x92A!*\x04chat2\x15Данные чата\x9a\x02\x01\x06R\x04chat:>\x92A;\n" +
-	"9*\x0fGetChatResponse2&Ответ получения чата\"\xf7\x01\n" +
-	"\x14ListUserChatsRequest\x12y\n" +
-	"\auser_id\x18\x01 \x01(\tB_\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\auser_id:d\x92Aa\n" +
+	"9*\x0fGetChatResponse2&Ответ получения чата\"\xf8\x01\n" +
+	"\x14ListUserChatsRequest\x12z\n" +
+	"\auser_id\x18\x01 \x01(\tB`\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id:d\x92Aa\n" +
 	"_*\x14ListUserChatsRequest2=Запрос списка чатов пользователя\xd2\x01\auser_id\"\xdd\x01\n" +
 	"\x15ListUserChatsResponse\x12i\n" +
 	"\x05chats\x18\x01 \x03(\v2\x11.api.chat.v1.ChatB@\x92A=*\x05chats20Список чатов пользователя\x9a\x02\x01\x01R\x05chats:Y\x92AV\n" +
-	"T*\x15ListUserChatsResponse2;Ответ списка чатов пользователя\"\xe5\x01\n" +
-	"\x16ListChatMembersRequest\x12i\n" +
-	"\achat_id\x18\x01 \x01(\tBO\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\achat_id:`\x92A]\n" +
+	"T*\x15ListUserChatsResponse2;Ответ списка чатов пользователя\"\xe6\x01\n" +
+	"\x16ListChatMembersRequest\x12j\n" +
+	"\achat_id\x18\x01 \x01(\tBP\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\achat_id:`\x92A]\n" +
 	"[*\x16ListChatMembersRequest27Запрос списка участников чата\xd2\x01\achat_id\"\xa3\x02\n" +
 	"\x17ListChatMembersResponse\x12\xb0\x01\n" +
 	"\buser_ids\x18\x01 \x03(\tB\x93\x01\x92A\x8f\x01*\buser_ids2-Список Id участников чатаJP[\"123e4567-e89b-12d3-a456-426614174000\", \"223e4567-e89b-12d3-a456-426614174001\"]\x9a\x02\x01\x01R\buser_ids:U\x92AR\n" +
-	"P*\x17ListChatMembersResponse25Ответ списка участников чата\"\xbf\x02\n" +
-	"\x12SendMessageRequest\x12i\n" +
-	"\achat_id\x18\x01 \x01(\tBO\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\achat_id\x12[\n" +
+	"P*\x17ListChatMembersResponse25Ответ списка участников чата\"\xc0\x02\n" +
+	"\x12SendMessageRequest\x12j\n" +
+	"\achat_id\x18\x01 \x01(\tBP\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\achat_id\x12[\n" +
 	"\x04text\x18\x02 \x01(\tBG\x92A:*\x04text2\x1dТекст сообщенияJ\x0f\"Привет!\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\x04text:a\x92A^\n" +
 	"\\*\x12SendMessageRequest25Запрос на отправку сообщения\xd2\x01\achat_id\xd2\x01\x04text\"\xd5\x01\n" +
 	"\x13SendMessageResponse\x12m\n" +
 	"\amessage\x18\x01 \x01(\v2\x14.api.chat.v1.MessageB=\x92A:*\amessage2+Отправленное сообщение\x9a\x02\x01\x06R\amessage:O\x92AL\n" +
-	"J*\x13SendMessageResponse23Ответ на отправку сообщения\"\xd5\x02\n" +
-	"\x13ListMessagesRequest\x12i\n" +
-	"\achat_id\x18\x01 \x01(\tBO\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\achat_id\x12g\n" +
-	"\x05limit\x18\x02 \x01(\x05BQ\x92AN*\x05limit2=Количество сообщений для выборкиJ\x0250\x9a\x02\x01\x03R\x05limit\x12\x16\n" +
-	"\x06cursor\x18\x03 \x01(\tR\x06cursor:R\x92AO\n" +
-	"M*\x13ListMessagesRequest2,Запрос списка сообщений\xd2\x01\achat_id\"\xe7\x01\n" +
+	"J*\x13SendMessageResponse23Ответ на отправку сообщения\"\x94\x04\n" +
+	"\x13ListMessagesRequest\x12j\n" +
+	"\achat_id\x18\x01 \x01(\tBP\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\achat_id\x12g\n" +
+	"\x05limit\x18\x02 \x01(\rBQ\x92AN*\x05limit2=Количество сообщений для выборкиJ\x0250\x9a\x02\x01\x03R\x05limit\x12\xd3\x01\n" +
+	"\x11last_message_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x88\x01\x92A\x81\x01*\x11last_message_time2hВремя отправления последнего сообщения в списке (курсор)\x9a\x02\x01\a\xe0A\x01R\x11last_message_time:R\x92AO\n" +
+	"M*\x13ListMessagesRequest2,Запрос списка сообщений\xd2\x01\achat_id\"\xae\x03\n" +
 	"\x14ListMessagesResponse\x12d\n" +
-	"\bmessages\x18\x01 \x03(\v2\x14.api.chat.v1.MessageB2\x92A/*\bmessages2\x1fСписок сообщений\x9a\x02\x01\x01R\bmessages\x12 \n" +
-	"\vnext_cursor\x18\x02 \x01(\tR\vnext_cursor:G\x92AD\n" +
-	"B*\x14ListMessagesResponse2*Ответ списка сообщений\"\x82\x03\n" +
-	"\x15StreamMessagesRequest\x12i\n" +
-	"\achat_id\x18\x01 \x01(\tBO\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\achat_id\x12\x8f\x01\n" +
-	"\rsince_unix_ms\x18\x02 \x01(\x03Bi\x92Af*\rsince_unix_ms2BВременная метка в миллисекундах (unix)J\r1694000000000\x9a\x02\x01\x03R\rsince_unix_ms:l\x92Ai\n" +
+	"\bmessages\x18\x01 \x03(\v2\x14.api.chat.v1.MessageB2\x92A/*\bmessages2\x1fСписок сообщений\x9a\x02\x01\x01R\bmessages\x12\xe6\x01\n" +
+	"\x11last_message_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x9b\x01\x92A\x94\x01*\x11last_message_time2{Следующее время отправления последнего сообщения в списке (курсор)\x9a\x02\x01\a\xe0A\x01R\x11last_message_time:G\x92AD\n" +
+	"B*\x14ListMessagesResponse2*Ответ списка сообщений\"\xa9\x03\n" +
+	"\x15StreamMessagesRequest\x12j\n" +
+	"\achat_id\x18\x01 \x01(\tBP\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\achat_id\x12\xb5\x01\n" +
+	"\x12since_message_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampBi\x92Ac*\x12since_message_time2IВремя отправления последнего сообщения\x9a\x02\x01\a\xe0A\x01R\x12since_message_time:l\x92Ai\n" +
 	"g*\x15StreamMessagesRequest2DЗапрос на получение потока сообщений\xd2\x01\achat_id\"\xc4\x01\n" +
 	"\x16StreamMessagesResponse\x12_\n" +
 	"\amessage\x18\x01 \x01(\v2\x14.api.chat.v1.MessageB/\x92A,*\amessage2\x1dНовое сообщение\x9a\x02\x01\x06R\amessage:I\x92AF\n" +
@@ -905,7 +906,7 @@ const file_api_chat_v1_chat_messages_proto_rawDesc = "" +
 	"\x04Chat\x12_\n" +
 	"\achat_id\x18\x01 \x01(\tBE\x92AB*\achat_id2\vId чатаJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\aR\achat_id\x12\xb8\x01\n" +
 	"\x0fparticipant_ids\x18\x02 \x03(\tB\x8d\x01\x92A\x89\x01*\x0fparticipant_ids2 Id участников чатаJP[\"123e4567-e89b-12d3-a456-426614174000\", \"223e4567-e89b-12d3-a456-426614174001\"]\x9a\x02\x01\x01R\x0fparticipant_ids:(\x92A%\n" +
-	"#*\x04Chat2\x1bСтруктура чата\"\xe9\x05\n" +
+	"#*\x04Chat2\x1bСтруктура чата\"\xd4\x05\n" +
 	"\aMessage\x12a\n" +
 	"\n" +
 	"message_id\x18\x01 \x01(\tBA\x92A>*\n" +
@@ -913,8 +914,11 @@ const file_api_chat_v1_chat_messages_proto_rawDesc = "" +
 	"message_id\x12\x9b\x01\n" +
 	"\achat_id\x18\x02 \x01(\tB\x80\x01\x92A}*\achat_id2FId чата, к которому относится сообщениеJ&\"987e6543-e21b-12d3-a456-426614174999\"\x9a\x02\x01\aR\achat_id\x12\xa4\x01\n" +
 	"\tsender_id\x18\x03 \x01(\tB\x85\x01\x92A\x81\x01*\tsender_id2HId пользователя, отправившего сообщениеJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\aR\tsender_id\x12Y\n" +
-	"\x04text\x18\x04 \x01(\tBE\x92AB*\x04text2\x1dТекст сообщенияJ\x17\"Привет, мир!\"\x9a\x02\x01\aR\x04text\x12\xa3\x01\n" +
-	"\x12created_at_unix_ms\x18\x05 \x01(\x03Bs\x92Ap*\x12created_at_unix_ms2GМетка времени создания сообщения (unix ms)J\r1694000000000\x9a\x02\x01\x03R\x12created_at_unix_ms:5\x92A2\n" +
+	"\x04text\x18\x04 \x01(\tBE\x92AB*\x04text2\x1dТекст сообщенияJ\x17\"Привет, мир!\"\x9a\x02\x01\aR\x04text\x12\x8e\x01\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampBR\x92AO*\n" +
+	"created_at2=Метка времени создания сообщения\x9a\x02\x01\aR\n" +
+	"created_at:5\x92A2\n" +
 	"0*\aMessage2%Структура сообщенияB\x8d\x01\n" +
 	"\x0fcom.api.chat.v1B\x11ChatMessagesProtoP\x01Z\x19chat/pkg/api/chat/v1;chat\xa2\x02\x03ACX\xaa\x02\vApi.Chat.V1\xca\x02\vApi\\Chat\\V1\xe2\x02\x17Api\\Chat\\V1\\GPBMetadata\xea\x02\rApi::Chat::V1b\x06proto3"
 
@@ -948,18 +952,23 @@ var file_api_chat_v1_chat_messages_proto_goTypes = []any{
 	(*StreamMessagesResponse)(nil),   // 13: api.chat.v1.StreamMessagesResponse
 	(*Chat)(nil),                     // 14: api.chat.v1.Chat
 	(*Message)(nil),                  // 15: api.chat.v1.Message
+	(*timestamppb.Timestamp)(nil),    // 16: google.protobuf.Timestamp
 }
 var file_api_chat_v1_chat_messages_proto_depIdxs = []int32{
 	14, // 0: api.chat.v1.GetChatResponse.chat:type_name -> api.chat.v1.Chat
 	14, // 1: api.chat.v1.ListUserChatsResponse.chats:type_name -> api.chat.v1.Chat
 	15, // 2: api.chat.v1.SendMessageResponse.message:type_name -> api.chat.v1.Message
-	15, // 3: api.chat.v1.ListMessagesResponse.messages:type_name -> api.chat.v1.Message
-	15, // 4: api.chat.v1.StreamMessagesResponse.message:type_name -> api.chat.v1.Message
-	5,  // [5:5] is the sub-list for method output_type
-	5,  // [5:5] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	16, // 3: api.chat.v1.ListMessagesRequest.last_message_time:type_name -> google.protobuf.Timestamp
+	15, // 4: api.chat.v1.ListMessagesResponse.messages:type_name -> api.chat.v1.Message
+	16, // 5: api.chat.v1.ListMessagesResponse.last_message_time:type_name -> google.protobuf.Timestamp
+	16, // 6: api.chat.v1.StreamMessagesRequest.since_message_time:type_name -> google.protobuf.Timestamp
+	15, // 7: api.chat.v1.StreamMessagesResponse.message:type_name -> api.chat.v1.Message
+	16, // 8: api.chat.v1.Message.created_at:type_name -> google.protobuf.Timestamp
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_api_chat_v1_chat_messages_proto_init() }

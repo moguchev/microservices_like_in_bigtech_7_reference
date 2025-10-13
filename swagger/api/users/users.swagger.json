@@ -118,7 +118,7 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           }
         ],
         "tags": [
@@ -185,11 +185,12 @@
             "type": "string"
           },
           {
-            "name": "body",
+            "name": "updateFields",
+            "description": "Обновляемые поля",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UserServiceUpdateProfileBody"
+              "$ref": "#/definitions/UpdateProfileRequestUpdateProfileFields"
             }
           }
         ],
@@ -200,7 +201,7 @@
     }
   },
   "definitions": {
-    "UserServiceUpdateProfileBody": {
+    "UpdateProfileRequestUpdateProfileFields": {
       "type": "object",
       "properties": {
         "nickname": {
@@ -222,8 +223,7 @@
           "title": "avatar_url"
         }
       },
-      "description": "Запрос на обновление профиля пользователя",
-      "title": "UpdateProfileRequest"
+      "title": "Обновляемые поля профиля"
     },
     "protobufAny": {
       "type": "object",
