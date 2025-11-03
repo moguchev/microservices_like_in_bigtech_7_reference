@@ -36,7 +36,33 @@ func (uc *SocialService) AcceptFriendRequest(ctx context.Context, id types.Reque
 		return nil, fmt.Errorf("%s: %w", api, models.ErrPermissionDenied)
 	}
 
-	friendRequest, err := uc.SocialRepository.UpdateFriendRequestStatus(ctx, id, models.FriendRequestStatusAccepted)
+	if request.Status == models.FriendRequestStatusAccepted {
+		return nil, fmt.Errorf("%s: request is already accepted %w", api, models.ErrInvalidArgument)
+	}
+
+	var friendRequest *models.FriendRequest
+	err = uc.TransactionManager.RunReadCommitted(ctx,
+		func(txCtx context.Context) error {
+			// Обновляем статус заявки
+			var updateErr error
+			friendRequest, updateErr = uc.SocialRepository.UpdateFriendRequestStatus(txCtx, id, models.FriendRequestStatusAccepted)
+			if updateErr != nil {
+				return updateErr
+			}
+
+			// Создаем пару друзей
+			if err := uc.SocialRepository.CreateFriendPair(txCtx, request.FromUser, request.ToUser); err != nil {
+				return err
+			}
+
+			// Добавляем событие в outbox
+			if err := uc.OutboxRepository.SaveFriendRequestUpdated(txCtx, request.ToUser, friendRequest); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", api, err)
 	}

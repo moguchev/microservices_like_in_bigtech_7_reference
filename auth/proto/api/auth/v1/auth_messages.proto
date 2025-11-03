@@ -24,7 +24,7 @@ message RegisterRequest {
   // Почта
   string email = 1 [
     json_name = "email",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.email = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "email"
@@ -84,7 +84,7 @@ message LoginRequest {
   // Почта
   string email = 1 [
     json_name = "email",
-    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.email = true,
     (google.api.field_behavior) = REQUIRED,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       title: "email"

@@ -1,6 +1,8 @@
 package users
 
 import (
+	"strings"
+
 	"users/internal/app/models"
 	"users/internal/app/models/types"
 	users_models "users/internal/app/usecases/users/models"
@@ -11,8 +13,9 @@ func newProfileFromPbCreateOrderRequest(req *pb.CreateProfileRequest) *users_mod
 	return &users_models.CreateProfileInfo{
 		UserID:    types.UserID(req.GetUserId()),
 		Name:      req.GetNickname(),
-		Bio:       req.GetBio(),
-		AvatarURL: req.GetAvatarUrl(),
+		Email:     req.GetEmail(),
+		Bio:       strings.TrimSpace(req.GetBio()),
+		AvatarURL: strings.TrimSpace(req.GetAvatarUrl()),
 	}
 }
 

@@ -43,6 +43,7 @@ CreateProfileRequest - запрос на создание профиля
 | nickname | [string](#string) |  | Никнейм |
 | bio | [string](#string) | optional | Биография |
 | avatar_url | [string](#string) | optional | URL аватара |
+| email | [string](#string) |  | Почта |
 
 
 

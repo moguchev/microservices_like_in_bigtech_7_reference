@@ -41,6 +41,7 @@ func (uc *usecase) CreateProfile(ctx context.Context, userInfo *users_models.Cre
 
 	newProfile := &models.UserProfile{
 		ID:        userInfo.UserID,
+		Email:     userInfo.Email,
 		Name:      userInfo.Name,
 		Bio:       userInfo.Bio,
 		AvatarURL: userInfo.AvatarURL,

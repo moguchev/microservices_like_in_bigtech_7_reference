@@ -10,6 +10,7 @@ import (
 	"chat/internal/app/usecases/chat"
 	"chat/internal/app/usecases/chat/mocks"
 
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -44,31 +45,33 @@ func TestChatServiceTestSuite(t *testing.T) {
 func (s *ChatServiceTestSuite) Test_CreateDirectChat_Positive() {
 	ctx := context.Background()
 	participantID := types.UserID("user2")
+	userID := types.UserID("user1")
 
-	expectedChat := &models.Chat{
-		ID: "chat1",
-		Members: []types.UserID{
-			"user1", "user2",
-		},
-	}
+	expectedChat := models.NewChat(userID, participantID)
 
 	s.UserIDProvider.EXPECT().
 		GetUserIDFromIncomingContext(ctx).
-		Return("user1", nil).
+		Return(userID.String(), nil).
 		Once()
 
 	s.ChatRepository.EXPECT().
-		CreateDirectChat(ctx, types.UserID("user1"), participantID). // <- исправлено
-		Return(expectedChat, nil).
+		GetUserChats(ctx, userID).
+		Return([]*models.Chat{}, nil).
+		Once()
+
+	s.ChatRepository.EXPECT().
+		CreateDirectChat(ctx, mock.MatchedBy(func(c *models.Chat) bool {
+			s.ElementsMatch([]types.UserID{userID, participantID}, c.Members)
+			return true
+		})).
+		Return(nil).
 		Once()
 
 	got, err := s.Usecase.CreateDirectChat(ctx, participantID)
 
 	s.NoError(err)
 	s.NotNil(got)
-	got.ID = ""
-	expectedChat.ID = ""
-	s.Equal(expectedChat, got)
+	s.Equal(expectedChat.Members, got.Members)
 }
 
 func (s *ChatServiceTestSuite) Test_CreateDirectChat_Unauthenticated() {

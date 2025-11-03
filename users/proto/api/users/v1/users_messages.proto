@@ -17,7 +17,8 @@ message CreateProfileRequest {
       description: "Запрос на создание профиля пользователя"
       required: [
         "user_id",
-        "nickname"
+        "nickname",
+        "email"
       ]
     }
   };
@@ -67,6 +68,19 @@ message CreateProfileRequest {
       title: "avatar_url"
       description: "URL аватара пользователя"
       example: "\"https://example.com/avatar.png\""
+      type: STRING
+    }
+  ];
+
+  // Почта
+  string email = 5 [
+    json_name = "email",
+    (buf.validate.field).string.email = true,
+    (google.api.field_behavior) = REQUIRED,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "email"
+      description: "email пользователя"
+      example: "\"user@gmail.com\""
       type: STRING
     }
   ];

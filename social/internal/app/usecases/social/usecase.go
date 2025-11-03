@@ -44,15 +44,30 @@ type (
 		RemoveFriend(ctx context.Context, userID, friendID types.UserID) error
 		// ListFriends - список друзей пользователя
 		ListFriends(ctx context.Context, id types.UserID, opts ...social_models.ListFriendsOption) (*social_models.ListFriendsResult, error)
+		// CreateFriendPair - создать пару друзей
+		CreateFriendPair(ctx context.Context, userID, friendID types.UserID) error
+	}
+
+	OutboxRepository interface {
+		// SaveFriendRequestCreated - запись в Outbox сообщения по созданию запроса в друзья
+		SaveFriendRequestCreated(ctx context.Context, toUserID types.UserID, req *models.FriendRequest) error
+		// SaveFriendRequestUpdated - запись в Outbox сообщения по подтверждению/отклонению заявки в друзья
+		SaveFriendRequestUpdated(ctx context.Context, toUserID types.UserID, req *models.FriendRequest) error
 	}
 
 	UserIDProvider interface {
 		GetUserIDFromIncomingContext(ctx context.Context) (string, error)
 	}
+
+	TransactionManager interface {
+		RunReadCommitted(ctx context.Context, f func(ctx context.Context) error) error
+	}
 )
 
 type Deps struct {
-	SocialRepository SocialRepository
+	TransactionManager TransactionManager
+	SocialRepository   SocialRepository
+	OutboxRepository   OutboxRepository
 	UserIDProvider
 }
 

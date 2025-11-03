@@ -46,6 +46,7 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 			mock: func(t *testing.T) social.Deps {
 				repoMock := mocks.NewSocialRepository(t)
 				providerMock := mocks.NewUserIDProvider(t)
+				txMock := mocks.NewTransactionManager(t)
 
 				providerMock.EXPECT().
 					GetUserIDFromIncomingContext(ctx).
@@ -68,8 +69,16 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					}, nil).
 					Once()
 
+				txMock.EXPECT().
+					RunReadCommitted(ctx, mock.AnythingOfType("func(context.Context) error")).
+					RunAndReturn(func(_ context.Context, fn func(context.Context) error) error {
+						txCtx := context.Background()
+						return fn(txCtx)
+					}).
+					Once()
+
 				repoMock.EXPECT().
-					UpdateFriendRequestStatus(ctx, requestID, models.FriendRequestStatusAccepted).
+					UpdateFriendRequestStatus(mock.Anything, requestID, models.FriendRequestStatusAccepted).
 					Return(&models.FriendRequest{
 						ID:       requestID,
 						FromUser: friendUser,
@@ -78,9 +87,15 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					}, nil).
 					Once()
 
+				repoMock.EXPECT().
+					CreateFriendPair(mock.Anything, friendUser, userID).
+					Return(nil).
+					Once()
+
 				return social.Deps{
-					SocialRepository: repoMock,
-					UserIDProvider:   providerMock,
+					SocialRepository:   repoMock,
+					UserIDProvider:     providerMock,
+					TransactionManager: txMock,
 				}
 			},
 		},
@@ -96,8 +111,9 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					Return("", errors.New("no user")).
 					Once()
 				return social.Deps{
-					SocialRepository: mocks.NewSocialRepository(t),
-					UserIDProvider:   providerMock,
+					SocialRepository:   mocks.NewSocialRepository(t),
+					UserIDProvider:     providerMock,
+					TransactionManager: mocks.NewTransactionManager(t),
 				}
 			},
 		},
@@ -109,6 +125,7 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 			mock: func(t *testing.T) social.Deps {
 				repoMock := mocks.NewSocialRepository(t)
 				providerMock := mocks.NewUserIDProvider(t)
+				txMock := mocks.NewTransactionManager(t)
 
 				providerMock.EXPECT().
 					GetUserIDFromIncomingContext(ctx).
@@ -121,8 +138,9 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					Once()
 
 				return social.Deps{
-					SocialRepository: repoMock,
-					UserIDProvider:   providerMock,
+					SocialRepository:   repoMock,
+					UserIDProvider:     providerMock,
+					TransactionManager: txMock,
 				}
 			},
 		},
@@ -134,6 +152,7 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 			mock: func(t *testing.T) social.Deps {
 				repoMock := mocks.NewSocialRepository(t)
 				providerMock := mocks.NewUserIDProvider(t)
+				txMock := mocks.NewTransactionManager(t)
 				otherUser := types.UserID(uuid.NewString())
 
 				providerMock.EXPECT().
@@ -149,8 +168,9 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					Once()
 
 				return social.Deps{
-					SocialRepository: repoMock,
-					UserIDProvider:   providerMock,
+					SocialRepository:   repoMock,
+					UserIDProvider:     providerMock,
+					TransactionManager: txMock,
 				}
 			},
 		},
@@ -162,6 +182,7 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 			mock: func(t *testing.T) social.Deps {
 				repoMock := mocks.NewSocialRepository(t)
 				providerMock := mocks.NewUserIDProvider(t)
+				txMock := mocks.NewTransactionManager(t)
 
 				providerMock.EXPECT().
 					GetUserIDFromIncomingContext(ctx).
@@ -174,8 +195,9 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					Once()
 
 				return social.Deps{
-					SocialRepository: repoMock,
-					UserIDProvider:   providerMock,
+					SocialRepository:   repoMock,
+					UserIDProvider:     providerMock,
+					TransactionManager: txMock,
 				}
 			},
 		},
@@ -187,6 +209,7 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 			mock: func(t *testing.T) social.Deps {
 				repoMock := mocks.NewSocialRepository(t)
 				providerMock := mocks.NewUserIDProvider(t)
+				txMock := mocks.NewTransactionManager(t)
 
 				providerMock.EXPECT().
 					GetUserIDFromIncomingContext(ctx).
@@ -200,14 +223,22 @@ func TestSocialService_AcceptFriendRequest(t *testing.T) {
 					}, nil).
 					Once()
 
+				txMock.EXPECT().
+					RunReadCommitted(ctx, mock.AnythingOfType("func(context.Context) error")).
+					RunAndReturn(func(_ context.Context, fn func(context.Context) error) error {
+						return fn(context.Background())
+					}).
+					Once()
+
 				repoMock.EXPECT().
-					UpdateFriendRequestStatus(ctx, requestID, models.FriendRequestStatusAccepted).
+					UpdateFriendRequestStatus(mock.Anything, requestID, models.FriendRequestStatusAccepted).
 					Return(nil, dbErr).
 					Once()
 
 				return social.Deps{
-					SocialRepository: repoMock,
-					UserIDProvider:   providerMock,
+					SocialRepository:   repoMock,
+					UserIDProvider:     providerMock,
+					TransactionManager: txMock,
 				}
 			},
 		},

@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 
-	"chat/internal/app/server"
-
 	"go.uber.org/dig"
 )
 
@@ -13,6 +11,8 @@ func main() {
 	container := dig.New()
 
 	_ = container.Provide(provideContext)
+	_ = container.Provide(providePostgresConnection)
+	_ = container.Provide(provideTransactionManager)
 	_ = container.Provide(provideChatRepository)
 	_ = container.Provide(provideChatUsecase)
 	_ = container.Provide(provideChatController)
@@ -20,10 +20,18 @@ func main() {
 	_ = container.Provide(provideGRPCMiddlewares)
 	_ = container.Provide(provideServerConfig)
 	_ = container.Provide(provideServer)
+	_ = container.Provide(provideOutboxRepository)
+	_ = container.Provide(provideOutboxProcessor)
+	_ = container.Provide(provideKafkaProducer)
+	_ = container.Provide(provideChatMessageEventsHandler)
+	_ = container.Provide(provideOutboxWorker)
+	_ = container.Provide(provideApp)
 
-	err := container.Invoke(func(ctx context.Context, cancel context.CancelFunc, srv *server.Server) {
+	err := container.Invoke(func(ctx context.Context, cancel context.CancelFunc, app *App) {
+		go app.Worker.Run(ctx)
+
 		defer cancel()
-		if err := srv.Run(ctx); err != nil {
+		if err := app.Server.Run(ctx); err != nil {
 			log.Fatalf("run server: %v", err)
 		}
 	})

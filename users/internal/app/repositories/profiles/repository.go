@@ -1,15 +1,22 @@
 package profiles
 
 import (
+	"lib/postgres"
 	"users/internal/app/usecases/users"
+
+	"github.com/Masterminds/squirrel"
 )
 
-type Repository struct{}
+var _ users.ProfileRepository = (*Repository)(nil)
 
-var (
-	_ users.ProfileRepository = (*Repository)(nil)
-)
+type Repository struct {
+	db postgres.QueryEngineProvider
+	qb squirrel.StatementBuilderType
+}
 
-func NewRepository() *Repository {
-	return &Repository{}
+func NewRepository(p postgres.QueryEngineProvider) *Repository {
+	return &Repository{
+		db: p,
+		qb: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	lib_types "lib/types"
+	"social/internal/app/models"
 	"social/internal/app/models/types"
 )
 
@@ -56,6 +57,7 @@ type (
 		RequestID lib_types.Field[types.RequestID]
 		FromUser  lib_types.Field[types.UserID]
 		ToUser    lib_types.Field[types.UserID]
+		Status    lib_types.Field[models.FriendRequestStatus]
 	}
 )
 

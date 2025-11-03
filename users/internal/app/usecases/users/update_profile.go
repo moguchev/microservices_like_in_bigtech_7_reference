@@ -10,7 +10,7 @@ import (
 )
 
 func (uc *usecase) UpdateProfile(ctx context.Context, id types.UserID, f users_models.ProfileUpdateFields) (*models.UserProfile, error) {
-	const api = "users.usecase.SearchByNickname"
+	const api = "users.usecase.UpdateProfile"
 
 	userID, err := uc.GetUserIDFromIncomingContext(ctx)
 	if err != nil {

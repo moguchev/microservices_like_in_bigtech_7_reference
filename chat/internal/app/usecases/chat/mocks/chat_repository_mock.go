@@ -26,34 +26,22 @@ func (_m *ChatRepository) EXPECT() *ChatRepository_Expecter {
 	return &ChatRepository_Expecter{mock: &_m.Mock}
 }
 
-// CreateDirectChat provides a mock function with given fields: ctx, userID, participantID
-func (_m *ChatRepository) CreateDirectChat(ctx context.Context, userID types.UserID, participantID types.UserID) (*models.Chat, error) {
-	ret := _m.Called(ctx, userID, participantID)
+// CreateDirectChat provides a mock function with given fields: ctx, _a1
+func (_m *ChatRepository) CreateDirectChat(ctx context.Context, _a1 *models.Chat) error {
+	ret := _m.Called(ctx, _a1)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateDirectChat")
 	}
 
-	var r0 *models.Chat
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, types.UserID, types.UserID) (*models.Chat, error)); ok {
-		return rf(ctx, userID, participantID)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, types.UserID, types.UserID) *models.Chat); ok {
-		r0 = rf(ctx, userID, participantID)
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *models.Chat) error); ok {
+		r0 = rf(ctx, _a1)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Chat)
-		}
+		r0 = ret.Error(0)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, types.UserID, types.UserID) error); ok {
-		r1 = rf(ctx, userID, participantID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // ChatRepository_CreateDirectChat_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateDirectChat'
@@ -63,25 +51,24 @@ type ChatRepository_CreateDirectChat_Call struct {
 
 // CreateDirectChat is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID types.UserID
-//   - participantID types.UserID
-func (_e *ChatRepository_Expecter) CreateDirectChat(ctx interface{}, userID interface{}, participantID interface{}) *ChatRepository_CreateDirectChat_Call {
-	return &ChatRepository_CreateDirectChat_Call{Call: _e.mock.On("CreateDirectChat", ctx, userID, participantID)}
+//   - _a1 *models.Chat
+func (_e *ChatRepository_Expecter) CreateDirectChat(ctx interface{}, _a1 interface{}) *ChatRepository_CreateDirectChat_Call {
+	return &ChatRepository_CreateDirectChat_Call{Call: _e.mock.On("CreateDirectChat", ctx, _a1)}
 }
 
-func (_c *ChatRepository_CreateDirectChat_Call) Run(run func(ctx context.Context, userID types.UserID, participantID types.UserID)) *ChatRepository_CreateDirectChat_Call {
+func (_c *ChatRepository_CreateDirectChat_Call) Run(run func(ctx context.Context, _a1 *models.Chat)) *ChatRepository_CreateDirectChat_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(types.UserID), args[2].(types.UserID))
+		run(args[0].(context.Context), args[1].(*models.Chat))
 	})
 	return _c
 }
 
-func (_c *ChatRepository_CreateDirectChat_Call) Return(_a0 *models.Chat, _a1 error) *ChatRepository_CreateDirectChat_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *ChatRepository_CreateDirectChat_Call) Return(_a0 error) *ChatRepository_CreateDirectChat_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ChatRepository_CreateDirectChat_Call) RunAndReturn(run func(context.Context, types.UserID, types.UserID) (*models.Chat, error)) *ChatRepository_CreateDirectChat_Call {
+func (_c *ChatRepository_CreateDirectChat_Call) RunAndReturn(run func(context.Context, *models.Chat) error) *ChatRepository_CreateDirectChat_Call {
 	_c.Call.Return(run)
 	return _c
 }
