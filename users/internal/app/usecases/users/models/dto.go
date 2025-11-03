@@ -10,6 +10,7 @@ type (
 	CreateProfileInfo struct {
 		UserID    types.UserID // required
 		Name      string       // required
+		Email     string       // required
 		Bio       string       // optional
 		AvatarURL string       // optional
 	}

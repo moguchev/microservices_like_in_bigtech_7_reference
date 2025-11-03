@@ -35,7 +35,9 @@ type CreateProfileRequest struct {
 	// Биография
 	Bio *string `protobuf:"bytes,3,opt,name=bio,proto3,oneof" json:"bio,omitempty"`
 	// URL аватара
-	AvatarUrl     *string `protobuf:"bytes,4,opt,name=avatar_url,proto3,oneof" json:"avatar_url,omitempty"`
+	AvatarUrl *string `protobuf:"bytes,4,opt,name=avatar_url,proto3,oneof" json:"avatar_url,omitempty"`
+	// Почта
+	Email         string `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -94,6 +96,13 @@ func (x *CreateProfileRequest) GetBio() string {
 func (x *CreateProfileRequest) GetAvatarUrl() string {
 	if x != nil && x.AvatarUrl != nil {
 		return *x.AvatarUrl
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
 	}
 	return ""
 }
@@ -682,7 +691,7 @@ var File_api_users_v1_users_messages_proto protoreflect.FileDescriptor
 
 const file_api_users_v1_users_messages_proto_rawDesc = "" +
 	"\n" +
-	"!api/users/v1/users_messages.proto\x12\fapi.users.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a google/protobuf/field_mask.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\xb7\x05\n" +
+	"!api/users/v1/users_messages.proto\x12\fapi.users.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a google/protobuf/field_mask.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\xa3\x06\n" +
 	"\x14CreateProfileRequest\x12z\n" +
 	"\auser_id\x18\x01 \x01(\tB`\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\a\xe0A\x02\xbaH\x05r\x03\xb0\x01\x01R\auser_id\x12}\n" +
 	"\bnickname\x18\x02 \x01(\tBa\x92AC*\bnickname2'Никнейм пользователяJ\n" +
@@ -691,8 +700,9 @@ const file_api_users_v1_users_messages_proto_rawDesc = "" +
 	"\n" +
 	"avatar_url\x18\x04 \x01(\tBj\x92A_*\n" +
 	"avatar_url2+URL аватара пользователяJ \"https://example.com/avatar.png\"\x9a\x02\x01\a\xbaH\x05r\x03\x88\x01\x01H\x01R\n" +
-	"avatar_url\x88\x01\x01:|\x92Ay\n" +
-	"w*\x14CreateProfileRequest2JЗапрос на создание профиля пользователя\xd2\x01\auser_id\xd2\x01\bnicknameB\x06\n" +
+	"avatar_url\x88\x01\x01\x12`\n" +
+	"\x05email\x18\x05 \x01(\tBJ\x92A=*\x05email2\x1eemail пользователяJ\x10\"user@gmail.com\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02`\x01R\x05email:\x85\x01\x92A\x81\x01\n" +
+	"\x7f*\x14CreateProfileRequest2JЗапрос на создание профиля пользователя\xd2\x01\auser_id\xd2\x01\bnickname\xd2\x01\x05emailB\x06\n" +
 	"\x04_bioB\r\n" +
 	"\v_avatar_url\"\xb4\x01\n" +
 	"\x15CreateProfileResponse\x123\n" +

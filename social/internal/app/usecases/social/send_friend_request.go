@@ -25,7 +25,20 @@ func (uc *SocialService) SendFriendRequest(ctx context.Context, id types.UserID)
 	newFriendRequest.ToUser = id
 	newFriendRequest.Status = models.FriendRequestStatusPending
 
-	if _, err = uc.SocialRepository.CreateFriendRequest(ctx, newFriendRequest); err != nil {
+	err = uc.TransactionManager.RunReadCommitted(ctx,
+		func(txCtx context.Context) error {
+			if _, err := uc.SocialRepository.CreateFriendRequest(txCtx, newFriendRequest); err != nil {
+				return err
+			}
+
+			if err := uc.OutboxRepository.SaveFriendRequestCreated(txCtx, newFriendRequest.ToUser, newFriendRequest); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	)
+	if err != nil {
 		return nil, fmt.Errorf("%s: %w", api, err)
 	}
 

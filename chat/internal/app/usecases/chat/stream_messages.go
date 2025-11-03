@@ -35,7 +35,7 @@ func (s *ChatService) StreamMessages(ctx context.Context, chatID types.ChatID, s
 				ctx,
 				chatID,
 				chat_models.WithGetMessagesLimit(messageHistoryLimit),
-				chat_models.WithGetMessagesLastMessageTime(sinceMessageTime),
+				chat_models.WithGetMessagesSinceMessageTime(sinceMessageTime),
 			)
 			if errGetMessages != nil {
 				log.Printf("%s: GetMessages error: %s", api, errGetMessages)

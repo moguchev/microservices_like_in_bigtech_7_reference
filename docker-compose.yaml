@@ -20,9 +20,16 @@ services:
       dockerfile: chat/Dockerfile
     image: chat-service:latest
     container_name: chat-service
+    env_file:
+      - .env
     ports:
       - "8082:8080"
     restart: unless-stopped
+    depends_on:
+      chat-postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - messenger
   social:
@@ -31,9 +38,16 @@ services:
       dockerfile: social/Dockerfile
     image: social-service:latest
     container_name: social-service
+    env_file:
+      - .env
     ports:
       - "8083:8080"
     restart: unless-stopped
+    depends_on:
+      social-postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - messenger
   users:
@@ -42,9 +56,14 @@ services:
       dockerfile: users/Dockerfile
     image: users-service:latest
     container_name: users-service
+    env_file:
+      - .env
     ports:
       - "8084:8080"
     restart: unless-stopped
+    depends_on:
+      users-postgresql:
+        condition: service_healthy
     networks:
       - messenger
   gateway:
@@ -61,5 +80,179 @@ services:
       - chat
       - social
       - users
+    networks:
+      - messenger
+  notification:
+    build:
+      context: .
+      dockerfile: notification/Dockerfile
+    image: notification-service:latest
+    container_name: notification-service
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - messenger
+  users-postgresql:
+    image: postgres:17.6
+    container_name: users-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${USERS_POSTGRES_DB}
+      POSTGRES_USER: ${USERS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${USERS_POSTGRES_PASSWORD}
+      PGDATA: ${USERS_PGDATA}
+    volumes:
+      - ./users/config/postgres/postgres.conf:/etc/postgresql/postgresql.conf:ro # конфиг БД
+      - ./users/config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./users/docker/postgresql/data:${USERS_PGDATA} # том для того, чтобы при перезапуске контейнера все данные сохранялись
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${USERS_POSTGRES_USER} -d ${USERS_POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - messenger
+  chat-postgresql:
+    image: postgres:17.6
+    container_name: chat-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${CHAT_POSTGRES_DB}
+      POSTGRES_USER: ${CHAT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${CHAT_POSTGRES_PASSWORD}
+      PGDATA: ${CHAT_PGDATA}
+    volumes:
+      - ./chat/config/postgres/postgres.conf:/etc/postgresql/postgresql.conf:ro # конфиг БД
+      - ./chat/config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./chat/docker/postgresql/data:${CHAT_PGDATA} # том для того, чтобы при перезапуске контейнера все данные сохранялись
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${CHAT_POSTGRES_USER} -d ${CHAT_POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - messenger
+  social-postgresql:
+    image: postgres:17.6
+    container_name: social-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${SOCIAL_POSTGRES_DB}
+      POSTGRES_USER: ${SOCIAL_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${SOCIAL_POSTGRES_PASSWORD}
+      PGDATA: ${SOCIAL_PGDATA}
+    volumes:
+      - ./social/config/postgres/postgres.conf:/etc/postgresql/postgresql.conf:ro # конфиг БД
+      - ./social/config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./social/docker/postgresql/data:${SOCIAL_PGDATA} # том для того, чтобы при перезапуске контейнера все данные сохранялись
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+    ports:
+      - "5436:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${SOCIAL_POSTGRES_USER} -d ${SOCIAL_POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - messenger
+  notification-postgresql:
+    image: postgres:17.6
+    container_name: notification-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_POSTGRES_DB}
+      POSTGRES_USER: ${NOTIFICATION_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${NOTIFICATION_POSTGRES_PASSWORD}
+      PGDATA: ${NOTIFICATION_PGDATA}
+    volumes:
+      - ./notification/config/postgres/postgres.conf:/etc/postgresql/postgresql.conf:ro # конфиг БД
+      - ./notification/config/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./notification/docker/postgresql/data:${NOTIFICATION_PGDATA} # том для того, чтобы при перезапуске контейнера все данные сохранялись
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+    ports:
+      - "5437:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${NOTIFICATION_POSTGRES_USER} -d ${NOTIFICATION_POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - messenger
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft (single-node broker+controller)
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+
+      # Листенеры: внешний и внутренний (для контейнеров)
+      KAFKA_LISTENERS: "PLAINTEXT://:9092,INTERNAL://:29092,CONTROLLER://:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,INTERNAL://kafka:29092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+
+      # Обязательные dev-настройки для одиночного брокера
+      CLUSTER_ID: "4L6g3nShT-eMCtK--X86sw"         # можно оставить так для локалки
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_NUM_PARTITIONS: "3"
+
+      KAFKA_LOG_DIRS: "/kafka-logs"
+    volumes:
+      - ./docker/kafka/logs:/kafka-logs
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - messenger
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8086:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
     networks:
       - messenger

@@ -10,11 +10,11 @@ import (
 
 // Message - сообщение
 type Message struct {
-	ID        types.MessageID
-	ChatID    types.ChatID
-	SenderID  types.UserID
-	Text      string
-	CreatedAt time.Time
+	ID        types.MessageID `json:"id"`
+	ChatID    types.ChatID    `json:"chat_id"`
+	SenderID  types.UserID    `json:"sender_id"`
+	Text      string          `json:"text"`
+	CreatedAt time.Time       `json:"created_at"`
 }
 
 func NewMessage() *Message {

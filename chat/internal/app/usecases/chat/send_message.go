@@ -38,7 +38,19 @@ func (s *ChatService) SendMessage(ctx context.Context, chatID types.ChatID, text
 	msg.SenderID = types.UserID(userID)
 	msg.Text = strings.TrimSpace(text)
 
-	_, err = s.ChatRepository.CreateMessage(ctx, msg)
+	err = s.TransactionManager.RunReadCommitted(ctx,
+		func(txCtx context.Context) error {
+			if _, err := s.ChatRepository.CreateMessage(txCtx, msg); err != nil {
+				return err
+			}
+
+			if err := s.OutboxRepository.SaveChatMessageSent(txCtx, msg.ChatID, msg); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", api, err)
 	}

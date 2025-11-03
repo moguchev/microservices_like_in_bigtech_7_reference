@@ -8,31 +8,51 @@ package wire
 
 import (
 	"context"
+	"fmt"
+	"github.com/IBM/sarama"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/grpc"
 	context2 "lib/auth/context"
+	"lib/kafka"
 	middleware_grpc2 "lib/middleware/grpc"
+	"lib/postgres"
+	"lib/postgres/transaction_manager"
+	"os"
+	"social/internal/app/adapters/friend_request_events_handler"
 	social3 "social/internal/app/controllers/social"
+	"social/internal/app/modules/outbox"
+	"social/internal/app/repositories/outbox"
 	"social/internal/app/repositories/social"
 	"social/internal/app/server"
 	social2 "social/internal/app/usecases/social"
 	"social/internal/middleware/grpc"
+	"strings"
+	"time"
 )
 
 // Injectors from wire.go:
 
-func InitializeServer(ctx context.Context) (*server.Server, error) {
+func InitializeApp(ctx context.Context) (*App, error) {
 	validator, err := newValidator()
 	if err != nil {
 		return nil, err
 	}
 	v := newMiddlewares(validator)
 	config := newConfig(v)
-	repository := social.NewRepository()
+	connection, err := newPostgresConnection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	transactionManager := newTransactionManager(connection)
+	repository := social.NewRepository(transactionManager)
+	outboxrepositoryRepository := newOutboxRepository(transactionManager)
+	processor := newOutboxProcessor(outboxrepositoryRepository)
 	userIDProvider := newUserIDProvider()
 	deps := social2.Deps{
-		SocialRepository: repository,
-		UserIDProvider:   userIDProvider,
+		TransactionManager: transactionManager,
+		SocialRepository:   repository,
+		OutboxRepository:   processor,
+		UserIDProvider:     userIDProvider,
 	}
 	usecase := social2.NewUsecase(deps)
 	socialDeps := social3.Deps{
@@ -46,12 +66,25 @@ func InitializeServer(ctx context.Context) (*server.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	return serverServer, nil
+	syncProducer, err := newKafkaProducer()
+	if err != nil {
+		return nil, err
+	}
+	kafkaFriendRequestBatchHandler := newFriendRequestEventsHandler(syncProducer)
+	outboxFriendRequestWorker := newOutboxWorker(ctx, outboxrepositoryRepository, transactionManager, kafkaFriendRequestBatchHandler)
+	app := &App{
+		Server: serverServer,
+		Worker: outboxFriendRequestWorker,
+	}
+	return app, nil
 }
 
 // wire.go:
 
-const address = ":8080"
+type App struct {
+	Server *server.Server
+	Worker *outbox.OutboxFriendRequestWorker
+}
 
 func newValidator() (*protovalidate.Validator, error) {
 	return protovalidate.New(protovalidate.WithDisableLazy(false))
@@ -62,12 +95,78 @@ func newMiddlewares(validator *protovalidate.Validator) []grpc.UnaryServerInterc
 }
 
 func newConfig(mws []grpc.UnaryServerInterceptor) server.Config {
+	grpcListenPort := os.Getenv("GRPC_LISTEN_PORT")
+
 	return server.Config{
-		GRPCPort:               address,
+		GRPCPort:               ":" + grpcListenPort,
 		ChainUnaryInterceptors: mws,
 	}
 }
 
 func newUserIDProvider() social2.UserIDProvider {
 	return context2.MyUserIDProvider{}
+}
+
+func newPostgresConnection(ctx context.Context) (*postgres.Connection, error) {
+	pgUser := os.Getenv("SOCIAL_POSTGRES_USER")
+	pgPassword := os.Getenv("SOCIAL_POSTGRES_PASSWORD")
+	pgDB := os.Getenv("SOCIAL_POSTGRES_DB")
+	pgHost := os.Getenv("SOCIAL_POSTGRES_HOST")
+	pgPort := os.Getenv("POSTGRES_PORT")
+	pgSSLmode := os.Getenv("POSTGRES_SSLMODE")
+
+	return postgres.NewConnectionPool(ctx, fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		pgUser, pgPassword, pgHost, pgPort, pgDB, pgSSLmode), postgres.WithMaxConnIdleTime(time.Minute),
+	)
+}
+
+func newTransactionManager(pool *postgres.Connection) *transaction_manager.TransactionManager {
+	return transaction_manager.New(pool)
+}
+
+func newOutboxRepository(txManager *transaction_manager.TransactionManager) *outboxrepository.Repository {
+	return outboxrepository.NewRepository(txManager)
+}
+
+func newKafkaProducer() (sarama.SyncProducer, error) {
+	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
+
+	return kafka.NewNewSyncProducer(strings.Split(kafkaBrokers, ","), nil)
+}
+
+func TopicResolver(e *outbox.Event) (topic string, key string) {
+	friendRequestTopicName := os.Getenv("KAFKA_SOCIAL_FRIEND_REQUEST_TOPIC_NAME")
+	friendUpdatedTopicName := os.Getenv("KAFKA_SOCIAL_FRIEND_UPDATED_TOPIC_NAME")
+
+	switch e.EventType {
+	case outbox.EventTypeFriendRequestCreated:
+		return friendRequestTopicName, e.AggregateID
+	case outbox.EventTypeFriendRequestUpdated:
+		return friendUpdatedTopicName, e.AggregateID
+	}
+
+	return "social.unknown.events", e.AggregateID
+}
+
+func newFriendRequestEventsHandler(producer sarama.SyncProducer) *friendrequesteventshandler.KafkaFriendRequestBatchHandler {
+	return friendrequesteventshandler.NewKafkaFriendRequestBatchHandler(producer, friendrequesteventshandler.WithMaxBatchSize(100), friendrequesteventshandler.WithTopicResolver(TopicResolver))
+}
+
+func newOutboxWorker(
+	ctx context.Context,
+	outboxRepo *outboxrepository.Repository,
+	txManager *transaction_manager.TransactionManager,
+	handler *friendrequesteventshandler.KafkaFriendRequestBatchHandler,
+) *outbox.OutboxFriendRequestWorker {
+	return outbox.NewOutboxFriendRequestWorker(
+		outboxRepo,
+		txManager,
+		handler, outbox.WithBatchSize(10), outbox.WithMaxRetry(10), outbox.WithRetryInterval(30*time.Second), outbox.WithWindow(time.Hour),
+	)
+}
+
+func newOutboxProcessor(outboxRepo *outboxrepository.Repository) *outbox.Processor {
+	return outbox.NewProcessor(outbox.Deps{
+		Repository: outboxRepo,
+	})
 }

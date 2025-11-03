@@ -40,7 +40,7 @@ func (s *ChatService) ListMessages(ctx context.Context, req *chat_models.ListMes
 	res, err := s.ChatRepository.GetMessages(
 		ctx,
 		req.ChatID,
-		chat_models.WithGetMessagesLastMessageTime(req.LastMessageTime),
+		chat_models.WithGetMessagesBeforeMessageTime(req.LastMessageTime),
 		chat_models.WithGetMessagesLimit(req.Limit),
 	)
 	if err != nil {

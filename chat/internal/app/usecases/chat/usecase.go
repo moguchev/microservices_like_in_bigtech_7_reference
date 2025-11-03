@@ -29,9 +29,7 @@ type Usecase interface {
 type (
 	ChatRepository interface {
 		// CreateDirectChat - создать чат
-		//
-		// errors: models.ErrAlreadyExists
-		CreateDirectChat(ctx context.Context, userID, participantID types.UserID) (*models.Chat, error)
+		CreateDirectChat(ctx context.Context, chat *models.Chat) error
 		// GetChat - получить информацию о чате
 		//
 		// errors: models.ErrNotFound
@@ -46,13 +44,24 @@ type (
 		StreamMessages(ctx context.Context, chatID types.ChatID) (<-chan *models.Message, error)
 	}
 
+	OutboxRepository interface {
+		// SaveChatMessageSent - запись в Outbox сообщения по отправке сообщения чата
+		SaveChatMessageSent(ctx context.Context, chatID types.ChatID, msg *models.Message) error
+	}
+
+	TransactionManager interface {
+		RunReadCommitted(ctx context.Context, f func(ctx context.Context) error) error
+	}
+
 	UserIDProvider interface {
 		GetUserIDFromIncomingContext(ctx context.Context) (string, error)
 	}
 )
 
 type Deps struct {
-	ChatRepository ChatRepository
+	ChatRepository     ChatRepository
+	TransactionManager TransactionManager
+	OutboxRepository   OutboxRepository
 	UserIDProvider
 }
 

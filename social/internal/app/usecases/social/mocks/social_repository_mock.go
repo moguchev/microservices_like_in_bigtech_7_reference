@@ -26,6 +26,54 @@ func (_m *SocialRepository) EXPECT() *SocialRepository_Expecter {
 	return &SocialRepository_Expecter{mock: &_m.Mock}
 }
 
+// CreateFriendPair provides a mock function with given fields: ctx, userID, friendID
+func (_m *SocialRepository) CreateFriendPair(ctx context.Context, userID types.UserID, friendID types.UserID) error {
+	ret := _m.Called(ctx, userID, friendID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateFriendPair")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, types.UserID, types.UserID) error); ok {
+		r0 = rf(ctx, userID, friendID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SocialRepository_CreateFriendPair_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateFriendPair'
+type SocialRepository_CreateFriendPair_Call struct {
+	*mock.Call
+}
+
+// CreateFriendPair is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userID types.UserID
+//   - friendID types.UserID
+func (_e *SocialRepository_Expecter) CreateFriendPair(ctx interface{}, userID interface{}, friendID interface{}) *SocialRepository_CreateFriendPair_Call {
+	return &SocialRepository_CreateFriendPair_Call{Call: _e.mock.On("CreateFriendPair", ctx, userID, friendID)}
+}
+
+func (_c *SocialRepository_CreateFriendPair_Call) Run(run func(ctx context.Context, userID types.UserID, friendID types.UserID)) *SocialRepository_CreateFriendPair_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(types.UserID), args[2].(types.UserID))
+	})
+	return _c
+}
+
+func (_c *SocialRepository_CreateFriendPair_Call) Return(_a0 error) *SocialRepository_CreateFriendPair_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *SocialRepository_CreateFriendPair_Call) RunAndReturn(run func(context.Context, types.UserID, types.UserID) error) *SocialRepository_CreateFriendPair_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateFriendRequest provides a mock function with given fields: ctx, request
 func (_m *SocialRepository) CreateFriendRequest(ctx context.Context, request *models.FriendRequest) (*models.FriendRequest, error) {
 	ret := _m.Called(ctx, request)

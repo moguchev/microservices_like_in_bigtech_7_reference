@@ -4,3 +4,4 @@ package social
 
 //go:generate mockery --disable-version-string --with-expecter --name UserIDProvider --filename user_id_provider_system_mock.go
 //go:generate mockery --disable-version-string --with-expecter --name SocialRepository --filename social_repository_mock.go
+//go:generate mockery --disable-version-string --with-expecter --name TransactionManager --filename transaction_manager_mock.go

@@ -36,7 +36,28 @@ func (uc *SocialService) DeclineFriendRequest(ctx context.Context, id types.Requ
 		return nil, fmt.Errorf("%s: %w", api, models.ErrPermissionDenied)
 	}
 
-	friendRequest, err := uc.SocialRepository.UpdateFriendRequestStatus(ctx, id, models.FriendRequestStatusDeclined)
+	if request.Status == models.FriendRequestStatusDeclined {
+		return nil, fmt.Errorf("%s: request is already declined %w", api, models.ErrInvalidArgument)
+	}
+
+	var friendRequest *models.FriendRequest
+	err = uc.TransactionManager.RunReadCommitted(ctx,
+		func(txCtx context.Context) error {
+			// Обновляем статус заявки
+			var updateErr error
+			friendRequest, updateErr = uc.SocialRepository.UpdateFriendRequestStatus(txCtx, id, models.FriendRequestStatusDeclined)
+			if updateErr != nil {
+				return updateErr
+			}
+
+			// Добавляем событие в outbox
+			if err := uc.OutboxRepository.SaveFriendRequestUpdated(txCtx, request.ToUser, friendRequest); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", api, err)
 	}

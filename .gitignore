@@ -3,3 +3,5 @@
 bin
 vendor.protobuf
 vendor
+.env
+docker

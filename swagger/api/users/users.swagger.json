@@ -279,13 +279,20 @@
           "example": "https://example.com/avatar.png",
           "description": "URL аватара пользователя",
           "title": "avatar_url"
+        },
+        "email": {
+          "type": "string",
+          "example": "user@gmail.com",
+          "description": "email пользователя",
+          "title": "email"
         }
       },
       "description": "Запрос на создание профиля пользователя",
       "title": "CreateProfileRequest",
       "required": [
         "user_id",
-        "nickname"
+        "nickname",
+        "email"
       ]
     },
     "v1CreateProfileResponse": {

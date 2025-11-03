@@ -360,14 +360,14 @@ const file_api_auth_v1_auth_messages_proto_rawDesc = "" +
 	"\n" +
 	"\x1fapi/auth/v1/auth_messages.proto\x12\vapi.auth.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\x99\x02\n" +
 	"\x0fRegisterRequest\x12`\n" +
-	"\x05email\x18\x01 \x01(\tBJ\x92A=*\x05email2\x1eemail пользователяJ\x10\"user@gmail.com\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\x05email\x12O\n" +
+	"\x05email\x18\x01 \x01(\tBJ\x92A=*\x05email2\x1eemail пользователяJ\x10\"user@gmail.com\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02`\x01R\x05email\x12O\n" +
 	"\bpassword\x18\x02 \x01(\tB3\x92A&*\bpassword2\fпарольJ\b\"xQta78\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\bpassword:S\x92AP\n" +
 	"N*\x0fRegisterRequest2(Запрос на регистрацию\xd2\x01\x05email\xd2\x01\bpassword\"\xc4\x01\n" +
 	"\x10RegisterResponse\x12o\n" +
 	"\auser_id\x18\x01 \x01(\tBU\x92AR*\auser_id2\x1bId пользователяJ&\"123e4567-e89b-12d3-a456-426614174000\"\x9a\x02\x01\aR\auser_id:?\x92A<\n" +
 	":*\x10RegisterResponse2&RegisterResponse - ответ Register\"\x85\x02\n" +
 	"\fLoginRequest\x12`\n" +
-	"\x05email\x18\x01 \x01(\tBJ\x92A=*\x05email2\x1eemail пользователяJ\x10\"user@gmail.com\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\x05email\x12O\n" +
+	"\x05email\x18\x01 \x01(\tBJ\x92A=*\x05email2\x1eemail пользователяJ\x10\"user@gmail.com\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02`\x01R\x05email\x12O\n" +
 	"\bpassword\x18\x02 \x01(\tB3\x92A&*\bpassword2\fпарольJ\b\"xQta78\"\x9a\x02\x01\a\xe0A\x02\xbaH\x04r\x02\x10\x01R\bpassword:B\x92A?\n" +
 	"=*\fLoginRequest2\x1aЗапрос на вход\xd2\x01\x05email\xd2\x01\bpassword\"\xae\x03\n" +
 	"\rLoginResponse\x12w\n" +
